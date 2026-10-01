@@ -17,11 +17,14 @@ npx skills add https://github.com/Leonxlnx/taste-skill --skill "design-taste-fro
 
 ## Toolkit placement
 
-Mirror installed skills under `/SKILLS/` so agents load them before generation. Each skill directory must include a `SKILL.md` with a YAML header.
+Installed by `setup.sh` into `/.agents/skills/design-taste-frontend/` via the skills CLI. Agents (Cursor, Claude Code, Codex, etc.) discover skills from that directory automatically.
 
 ## Verify
 
-Confirm the skill is visible to your agent (Cursor / Claude Code / Codex / etc.) and that `/SKILLS/` contains the expected `SKILL.md` files.
+```bash
+npx skills ls
+ls .agents/skills/design-taste-frontend/SKILL.md
+```
 
 ## References
 

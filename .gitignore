@@ -1,3 +1,12 @@
 # Brand Context & Global History (IP Isolation)
 /BRANDS/
 /history/
+
+# Provisioned locally by setup.sh
+/.agents/skills/
+/vendor/
+TOOLS.md
+skills-lock.json
+
+# Legacy (removed — skills now live in .agents/skills/)
+/SKILLS/

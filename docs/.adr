@@ -43,22 +43,23 @@ categories:
   description: Decisions about visual guidelines, aesthetic enforcement, and how UI
     building blocks are sourced for LLM-friendly generation.
   created_at: '2026-10-01T13:15:11'
-  modified_at: '2026-10-01T13:15:24'
+  modified_at: '2026-10-01T15:54:15'
   decisions:
   - id: 1
     title: Semantic Design Guidelines (DESIGN.md)
     problem: JSON design tokens and Figma exports require complex parsers and are
       poorly aligned with how LLMs natively consume design intent.
-    decision: Adopt plain-text DESIGN.md files (based on the VoltAgent/Stitch standard)
-      to define visual themes, color roles, and typography, instead of relying on
-      JSON design tokens or Figma exports. Place a descriptive DESIGN.md in each brand
-      directory.
+    decision: Adopt plain-text DESIGN.md files (based on the VoltAgent/Stitch standard
+      and the awesome-design-md reference collection) to define visual themes, color
+      roles, and typography, instead of relying on JSON design tokens or Figma exports.
+      Place a descriptive DESIGN.md in each brand directory under /BRANDS/{brand}/.
+      Reference copies may live under vendor/awesome-design-md/ after setup.
     pros:
     - LLMs process Markdown natively
     - Agents instantly understand look and feel without parsers
     - Keeps brand visual intent human-readable and versionable
     cons: []
-    modified_at: '2026-10-01T13:15:24'
+    modified_at: '2026-10-01T15:54:15'
     sub_decisions: []
     deprecated: false
   - id: 2
@@ -74,9 +75,12 @@ categories:
     - Encodes high-quality design preferences before generation
     - Centralizes reusable aesthetic rules for all agents
     cons: []
-    modified_at: '2026-10-01T13:15:24'
+    modified_at: '2026-10-01T15:54:15'
     sub_decisions: []
-    deprecated: false
+    deprecated: true
+    deprecated_at: '2026-10-01T15:54:15'
+    replaced_by:
+    - '2.4'
   - id: 3
     title: Open-Source Component Sourcing
     problem: Heavy NPM dependency trees bloat the toolkit and give agents brittle,
@@ -91,13 +95,31 @@ categories:
     modified_at: '2026-10-01T13:15:24'
     sub_decisions: []
     deprecated: false
+  - id: 4
+    title: Agent Skills via skills CLI (.agents/skills/)
+    problem: A manual root /SKILLS/ clone layout duplicated the skills CLI install
+      path (.agents/skills/), drifted from Cursor/agent conventions, and left skills-lock.json
+      unmanaged.
+    decision: Install agent skills exclusively through the skills CLI into /.agents/skills/{skill-name}/.
+      setup.sh provisions Taste Skill (design-taste-frontend) and Vercel web-design-guidelines
+      this way. The legacy /SKILLS/ directory is removed and git-ignored. Local skills-lock.json
+      records installed skill hashes and is git-ignored.
+    pros:
+    - Matches Cursor and skills.sh conventions
+    - Single install path for agents and setup.sh
+    - Lockfile enables reproducible skill restores
+    cons:
+    - Skills are local/git-ignored rather than versioned in-repo
+    modified_at: '2026-10-01T15:54:15'
+    sub_decisions: []
+    deprecated: false
   deprecated: false
 - id: 3
   title: Repository Structure & Brand Isolation
   description: Decisions about directory layout, brand IP protection, project segregation,
     and history tracking.
   created_at: '2026-10-01T13:15:12'
-  modified_at: '2026-10-01T13:15:30'
+  modified_at: '2026-10-01T15:54:18'
   decisions:
   - id: 1
     title: Strict Brand Context Isolation (/BRANDS/)
@@ -115,18 +137,22 @@ categories:
     sub_decisions: []
     deprecated: false
   - id: 2
-    title: Granular and Decentralized History Tracking
+    title: Three-Tier Decentralized History Tracking
     problem: A single shared history log mixes toolkit architecture evolution with
-      brand/client design history, making both harder to reason about.
-    decision: 'Maintain split history logs: a git-ignored /history/HISTORY.md at the
-      root for global architectural decisions, and a local /history/HISTORY.md inside
-      each brand directory.'
+      brand and project design history, and unstructured HISTORY.md files bury decisions
+      without navigable indexes.
+    decision: 'Maintain three-tier git-ignored history: (1) /history/ at root for
+      toolkit-wide structural decisions, (2) /BRANDS/{brand}/history/ for brand design
+      evolution, (3) /BRANDS/{brand}/Projects/{project_name}/history/ for project-specific
+      choices. Every decision is a unique Markdown file with an objective name. Each
+      HISTORY.md is index-only (brief descriptions and links), never the full decision
+      text.'
     pros:
-    - Separates toolkit codebase evolution from brand design evolution
-    - Keeps brand history local and private
-    - Improves context focus for agents and maintainers
+    - Separates toolkit, brand, and project evolution
+    - Keeps brand/project history local and private
+    - Index-only HISTORY.md stays scannable for agents
     cons: []
-    modified_at: '2026-10-01T13:15:30'
+    modified_at: '2026-10-01T15:54:18'
     sub_decisions: []
     deprecated: false
   - id: 3
@@ -143,28 +169,45 @@ categories:
     modified_at: '2026-10-01T13:15:30'
     sub_decisions: []
     deprecated: false
+  - id: 4
+    title: Local Vendor Checkouts (/vendor/)
+    problem: Third-party skill repos, component references, and apps like screenshot-to-code
+      must be present locally without polluting the shared git history or brand IP
+      paths.
+    decision: Provision third-party checkouts and local npm CLI prefixes under a git-ignored
+      /vendor/ directory via setup.sh (e.g., vendor/awesome-design-md/, vendor/screenshot-to-code/,
+      vendor/npm-global/, vendor/visual-testing/).
+    pros:
+    - Keeps large clones out of git
+    - Gives setup.sh a stable local layout
+    - Separates vendor code from /BRANDS/ IP
+    cons: []
+    modified_at: '2026-10-01T15:54:18'
+    sub_decisions: []
+    deprecated: false
   deprecated: false
 - id: 4
   title: Agent Orchestration & Documentation
   description: Decisions about LLM guidance files, language policy, and how agents
     are constrained at runtime.
   created_at: '2026-10-01T13:15:12'
-  modified_at: '2026-10-01T13:15:38'
+  modified_at: '2026-10-01T15:54:22'
   decisions:
   - id: 1
     title: Agent Orchestration via AGENTS.md
     problem: Without a mandatory root guide, agents lack a single index of tools/skills
       and may cross-contaminate brand data across executions.
     decision: A mandatory AGENTS.md file must be present at the repository root to
-      act as the master guide for the LLM. It indexes available tools/skills and explicitly
-      forbids cross-contaminating brand data, ensuring the agent only reads one /BRANDS/{brand}/
-      context per execution.
+      act as the master guide for the LLM. It indexes available tools/skills, requires
+      reading git-ignored TOOLS.md after setup, enforces loading constraints from
+      /.agents/skills/, and forbids cross-contaminating brand data so the agent only
+      reads one /BRANDS/{brand}/ context per execution.
     pros:
     - Provides a single orchestration entrypoint
     - Indexes tools and skills for the agent
     - Enforces one-brand-per-execution isolation
     cons: []
-    modified_at: '2026-10-01T13:15:38'
+    modified_at: '2026-10-01T15:54:22'
     sub_decisions: []
     deprecated: false
   - id: 2
@@ -183,13 +226,29 @@ categories:
     modified_at: '2026-10-01T13:15:38'
     sub_decisions: []
     deprecated: false
+  - id: 3
+    title: Guideline Fallback Hierarchy
+    problem: Agents need a deterministic order when project, brand, and shared style
+      references disagree or when a brand has no DESIGN.md yet.
+    decision: 'Apply design rules in strict precedence: Project Guidelines > Brand
+      Guidelines > Vercel Guidelines (default fallback). Vercel Guidelines are optional
+      and must not replace a brand design system when one exists. Custom project/brand
+      rules must be declared in the respective DESIGN.md.'
+    pros:
+    - Prevents conflicting style sources
+    - Gives brands without guides a safe fallback
+    - Matches AGENTS.md runtime rules
+    cons: []
+    modified_at: '2026-10-01T15:54:22'
+    sub_decisions: []
+    deprecated: false
   deprecated: false
 - id: 5
   title: Tooling, Testing & Provisioning
   description: Decisions about UI testing strategy, forbidden tooling, and environment
     setup automation.
   created_at: '2026-10-01T13:15:12'
-  modified_at: '2026-10-01T13:15:38'
+  modified_at: '2026-10-01T15:54:33'
   decisions:
   - id: 1
     title: Vision-Based Autonomous Testing (Microsoft Isolation)
@@ -203,9 +262,12 @@ categories:
     - Avoids unwanted telemetry surfaces
     - Reduces test fragility via visual/phenomenological validation
     cons: []
-    modified_at: '2026-10-01T13:15:38'
+    modified_at: '2026-10-01T15:54:26'
     sub_decisions: []
-    deprecated: false
+    deprecated: true
+    deprecated_at: '2026-10-01T15:54:26'
+    replaced_by:
+    - '5.4'
   - id: 2
     title: Automated Environment Provisioning
     problem: Installing third-party UI tools, agents, and testing frameworks manually
@@ -218,7 +280,95 @@ categories:
     - Reduces environment drift
     - Installs agents and testing frameworks together
     cons: []
-    modified_at: '2026-10-01T13:15:38'
+    modified_at: '2026-10-01T15:54:25'
+    sub_decisions: []
+    deprecated: true
+    deprecated_at: '2026-10-01T15:54:25'
+    replaced_by:
+    - '5.3'
+  - id: 3
+    title: Root setup.sh Provisioner
+    problem: Installing third-party UI tools, agent skills, and testing frameworks
+      manually leads to inconsistent environments; the earlier install.sh name no
+      longer matches the repository.
+    decision: Use a single root setup.sh bash script as the unified provisioner. It
+      installs prerequisites, agent skills via the skills CLI, vendor checkouts, local
+      npm CLIs under vendor/npm-global/, and screenshot-to-code. Agents must run setup.sh
+      before using external tools and may install manually only if setup.sh fails.
+      Prefer ./setup.sh --yes in non-interactive sessions.
+    pros:
+    - Standardizes onboarding
+    - Matches README and AGENTS.md
+    - Supports non-interactive agent runs
+    cons: []
+    modified_at: '2026-10-01T15:54:33'
+    sub_decisions:
+    - id: 1
+      title: Local npm Prefix and Managed Python for Native Deps
+      problem: Global npm installs fail with EACCES on locked system prefixes, and
+        screenshot-to-code native wheels (Pillow/pillow-heif) fail on bleeding-edge
+        system Python (e.g. 3.14).
+      decision: Install npm CLIs (Originkit, shadcn) with npm install -g --prefix
+        vendor/npm-global so binaries live in vendor/npm-global/bin. When system Python
+        is newer than 3.12, setup.sh provisions a managed CPython 3.12 via uv and
+        points the screenshot-to-code Poetry env at it.
+      pros:
+      - Avoids root/global npm permission failures
+      - Keeps screenshot-to-code installable on Arch/newer Python
+      - Bins remain discoverable via TOOLS.md
+      cons: []
+      modified_at: '2026-10-01T15:54:33'
+      deprecated: false
+    deprecated: false
+  - id: 4
+    title: Optional Vision Testing (Midscene.js + Puppeteer)
+    problem: Requiring Midscene.js and Puppeteer for every environment increases install
+      time and model-key burden, while Playwright remains undesirable as the toolkit
+      test stack.
+    decision: Treat Midscene.js paired with Puppeteer as the recommended but optional
+      visual-testing baseline. setup.sh prompts to install them (or honors --with-visual-testing
+      / --skip-visual-testing / INSTALL_VISUAL_TESTING). Toolkit agents must not adopt
+      Microsoft Playwright as the primary test stack; Playwright Chromium used only
+      as an internal dependency of screenshot-to-code preview is allowed and does
+      not replace Midscene+Puppeteer.
+    pros:
+    - Keeps core setup lighter
+    - Preserves Microsoft-isolation for toolkit tests
+    - Documents optional path clearly in README and TOOLS.md
+    cons:
+    - Visual testing may be absent until explicitly opted in
+    modified_at: '2026-10-01T15:54:26'
+    sub_decisions: []
+    deprecated: false
+  - id: 5
+    title: Incremental Local Tool Inventory (TOOLS.md)
+    problem: After provisioning, agents invent install paths and miss whether optional
+      tools were skipped, causing failed commands and inconsistent usage.
+    decision: Have setup.sh generate a git-ignored root TOOLS.md and append a row
+      after every install or skip step (not only at the end). TOOLS.md lists each
+      tool status, exact binaries/commands/paths, and notes. Agents must read TOOLS.md
+      after setup and must not invent paths when the inventory already lists them.
+    pros:
+    - Surfaces partial installs immediately
+    - Gives agents authoritative local paths
+    - Records skipped optional tools explicitly
+    cons: []
+    modified_at: '2026-10-01T15:54:32'
+    sub_decisions: []
+    deprecated: false
+  - id: 6
+    title: Per-Tool Setup Guides under docs/tools/
+    problem: Curated tools need durable English setup docs without mixing them into
+      brand contexts or burying them beside the ADR root.
+    decision: Maintain a short SETUP.md for each curated tool under docs/tools/{tool-name}/SETUP.md.
+      README and setup.sh point agents there for detailed install/usage after consulting
+      TOOLS.md for local paths.
+    pros:
+    - Keeps global docs English and discoverable
+    - Separates ADR history from how-to guides
+    - One folder per tool
+    cons: []
+    modified_at: '2026-10-01T15:54:32'
     sub_decisions: []
     deprecated: false
   deprecated: false
