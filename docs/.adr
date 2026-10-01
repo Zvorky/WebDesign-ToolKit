@@ -1,0 +1,224 @@
+categories:
+- id: 1
+  title: Core Architecture & Workflow
+  description: Foundational decisions about how the WebDesign ToolKit operates, including
+    AI-driven development and interface strategy.
+  created_at: '2026-10-01T13:15:07'
+  modified_at: '2026-10-01T13:15:18'
+  decisions:
+  - id: 1
+    title: AI-Driven Front-End Infrastructure
+    problem: Manual front-end development does not scale for a multi-brand toolkit
+      where components, integration, and UI testing must stay autonomous and consistent
+      across natural-language constraints.
+    decision: Shift from manual front-end development to an AI-agent-driven workflow.
+      The repository acts as a unified toolkit where LLMs handle component generation,
+      integration, and UI testing based on natural language constraints.
+    pros:
+    - Maximizes agent autonomy
+    - Unifies generation, integration, and testing in one toolkit
+    - Aligns the repo with LLM-native workflows
+    cons: []
+    modified_at: '2026-10-01T13:15:18'
+    sub_decisions: []
+    deprecated: false
+  - id: 2
+    title: TUI/CLI First Approach
+    problem: Jumping straight into complex web layouts risks weak foundations for
+      agent tooling and slows early iteration on the developer-facing toolkit.
+    decision: Initial toolkit and development efforts will focus on Terminal User
+      Interfaces (TUI) and Command Line Interfaces (CLI) before expanding into complex
+      web layouts.
+    pros:
+    - Establishes a strong developer-friendly foundation
+    - Keeps early scope focused and iterable
+    - Delays complex web layout concerns until the agent toolkit is solid
+    cons: []
+    modified_at: '2026-10-01T13:15:18'
+    sub_decisions: []
+    deprecated: false
+  deprecated: false
+- id: 2
+  title: Design System & Component Sourcing
+  description: Decisions about visual guidelines, aesthetic enforcement, and how UI
+    building blocks are sourced for LLM-friendly generation.
+  created_at: '2026-10-01T13:15:11'
+  modified_at: '2026-10-01T13:15:24'
+  decisions:
+  - id: 1
+    title: Semantic Design Guidelines (DESIGN.md)
+    problem: JSON design tokens and Figma exports require complex parsers and are
+      poorly aligned with how LLMs natively consume design intent.
+    decision: Adopt plain-text DESIGN.md files (based on the VoltAgent/Stitch standard)
+      to define visual themes, color roles, and typography, instead of relying on
+      JSON design tokens or Figma exports. Place a descriptive DESIGN.md in each brand
+      directory.
+    pros:
+    - LLMs process Markdown natively
+    - Agents instantly understand look and feel without parsers
+    - Keeps brand visual intent human-readable and versionable
+    cons: []
+    modified_at: '2026-10-01T13:15:24'
+    sub_decisions: []
+    deprecated: false
+  - id: 2
+    title: Anti-Slop Enforcement (SKILL.md)
+    problem: Unconstrained LLM generation tends toward generic AI aesthetics (slop),
+      weak layout choices, and noisy motion unless quality preferences are enforced
+      before code is written.
+    decision: Integrate the Taste Skill framework using SKILL.md files to enforce
+      strict aesthetic, layout, and motion rules. Keep these files version-controlled
+      in the root /SKILLS/ directory.
+    pros:
+    - Prevents generic AI-generated UI
+    - Encodes high-quality design preferences before generation
+    - Centralizes reusable aesthetic rules for all agents
+    cons: []
+    modified_at: '2026-10-01T13:15:24'
+    sub_decisions: []
+    deprecated: false
+  - id: 3
+    title: Open-Source Component Sourcing
+    problem: Heavy NPM dependency trees bloat the toolkit and give agents brittle,
+      hard-to-refactor building blocks.
+    decision: Prefer copy-paste, zero-dependency component libraries (Cult UI, Skiper
+      UI) and MCP-enabled motion libraries (Originkit).
+    pros:
+    - Reduces NPM dependency bloat
+    - Provides ready-to-use high-quality blocks
+    - Makes LLM refactoring and adaptation easier
+    cons: []
+    modified_at: '2026-10-01T13:15:24'
+    sub_decisions: []
+    deprecated: false
+  deprecated: false
+- id: 3
+  title: Repository Structure & Brand Isolation
+  description: Decisions about directory layout, brand IP protection, project segregation,
+    and history tracking.
+  created_at: '2026-10-01T13:15:12'
+  modified_at: '2026-10-01T13:15:30'
+  decisions:
+  - id: 1
+    title: Strict Brand Context Isolation (/BRANDS/)
+    problem: Brand-specific configuration mixed into shared repository paths risks
+      IP leakage and causes LLMs to hallucinate or bleed context across design systems.
+    decision: All brand-specific configuration, DESIGN.md guidelines, brandbooks,
+      and overviews (README.md) must be isolated inside a git-ignored /BRANDS/{brand}/
+      directory.
+    pros:
+    - Protects intellectual property
+    - Prevents cross-brand context contamination
+    - Gives each brand a clear, isolated source of truth
+    cons: []
+    modified_at: '2026-10-01T13:15:30'
+    sub_decisions: []
+    deprecated: false
+  - id: 2
+    title: Granular and Decentralized History Tracking
+    problem: A single shared history log mixes toolkit architecture evolution with
+      brand/client design history, making both harder to reason about.
+    decision: 'Maintain split history logs: a git-ignored /history/HISTORY.md at the
+      root for global architectural decisions, and a local /history/HISTORY.md inside
+      each brand directory.'
+    pros:
+    - Separates toolkit codebase evolution from brand design evolution
+    - Keeps brand history local and private
+    - Improves context focus for agents and maintainers
+    cons: []
+    modified_at: '2026-10-01T13:15:30'
+    sub_decisions: []
+    deprecated: false
+  - id: 3
+    title: Project-Level Segregation
+    problem: Multiple applications under the same brand can share source code or project-specific
+      decisions unintentionally, diluting agent focus and coupling unrelated work.
+    decision: Introduce a /Projects/ subdirectory within each brand folder as /BRANDS/{brand}/Projects/{project_name}/
+      so applications do not share source code or project-specific historical decisions.
+    pros:
+    - Isolates project contexts for the LLM
+    - Prevents cross-project source and history coupling
+    - Supports multiple apps per brand cleanly
+    cons: []
+    modified_at: '2026-10-01T13:15:30'
+    sub_decisions: []
+    deprecated: false
+  deprecated: false
+- id: 4
+  title: Agent Orchestration & Documentation
+  description: Decisions about LLM guidance files, language policy, and how agents
+    are constrained at runtime.
+  created_at: '2026-10-01T13:15:12'
+  modified_at: '2026-10-01T13:15:38'
+  decisions:
+  - id: 1
+    title: Agent Orchestration via AGENTS.md
+    problem: Without a mandatory root guide, agents lack a single index of tools/skills
+      and may cross-contaminate brand data across executions.
+    decision: A mandatory AGENTS.md file must be present at the repository root to
+      act as the master guide for the LLM. It indexes available tools/skills and explicitly
+      forbids cross-contaminating brand data, ensuring the agent only reads one /BRANDS/{brand}/
+      context per execution.
+    pros:
+    - Provides a single orchestration entrypoint
+    - Indexes tools and skills for the agent
+    - Enforces one-brand-per-execution isolation
+    cons: []
+    modified_at: '2026-10-01T13:15:38'
+    sub_decisions: []
+    deprecated: false
+  - id: 2
+    title: English as the Primary Repository Language
+    problem: Mixed-language repository structure and global docs reduce consistency
+      for global contributors and weaken LLM comprehension of shared toolkit context.
+    decision: The repository structure, source code, and global documentation (including
+      this ADR) must be exclusively in English. User-specific and brand-specific content
+      (e.g., files inside /BRANDS/ and local history/ folders) are exempt and may
+      use the user's native language.
+    pros:
+    - Standardizes the toolkit for global usage
+    - Improves LLM comprehension of shared docs and code
+    - Keeps brand-local content flexible for native languages
+    cons: []
+    modified_at: '2026-10-01T13:15:38'
+    sub_decisions: []
+    deprecated: false
+  deprecated: false
+- id: 5
+  title: Tooling, Testing & Provisioning
+  description: Decisions about UI testing strategy, forbidden tooling, and environment
+    setup automation.
+  created_at: '2026-10-01T13:15:12'
+  modified_at: '2026-10-01T13:15:38'
+  decisions:
+  - id: 1
+    title: Vision-Based Autonomous Testing (Microsoft Isolation)
+    problem: DOM-based UI tests are fragile, and Microsoft-backed tooling such as
+      Playwright introduces unwanted corporate dependency and telemetry concerns.
+    decision: Use Midscene.js paired with Puppeteer for headless UI testing, strictly
+      banning Microsoft-backed tools like Playwright. Prefer vision-based phenomenological
+      checks over brittle DOM assertions.
+    pros:
+    - Ensures corporate independence
+    - Avoids unwanted telemetry surfaces
+    - Reduces test fragility via visual/phenomenological validation
+    cons: []
+    modified_at: '2026-10-01T13:15:38'
+    sub_decisions: []
+    deprecated: false
+  - id: 2
+    title: Automated Environment Provisioning
+    problem: Installing third-party UI tools, agents, and testing frameworks manually
+      leads to inconsistent environments across machines.
+    decision: Include a single install.sh bash script in the repository root to standardize
+      setup so all third-party UI tools, agents, and testing frameworks install seamlessly
+      in the same environment.
+    pros:
+    - Standardizes onboarding and setup
+    - Reduces environment drift
+    - Installs agents and testing frameworks together
+    cons: []
+    modified_at: '2026-10-01T13:15:38'
+    sub_decisions: []
+    deprecated: false
+  deprecated: false
