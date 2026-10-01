@@ -64,7 +64,7 @@
 
 
 ## **[ADR-3.0]** Repository Structure & Brand Isolation
-**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-01T15:54:18  
+**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-01T16:09:59  
 
 **Description:** Decisions about directory layout, brand IP protection, project segregation, and history tracking.  
 
@@ -99,6 +99,14 @@
   **Pro:** Keeps large clones out of git  
   **Pro:** Gives setup.sh a stable local layout  
   **Pro:** Separates vendor code from /BRANDS/ IP  
+
+- ### **[ADR-3.5]** Versioned Brand and Project Templates under /BRANDS/  
+  **Modified at:** 2026-10-01T16:09:59  
+  **Problem:** New brand and project folders under git-ignored /BRANDS/ lacked a shared, documented scaffold, so agents and humans invented inconsistent layouts and missing history/DESIGN files.  
+  **Decision:** Keep the versioned Markdown-only scaffolds inside /BRANDS/ itself: /BRANDS/_TEMPLATE/ for brands and /BRANDS/_TEMPLATE/Projects/_TEMPLATE/ for projects. .gitignore ignores /BRANDS/* but un-ignores README.md and _TEMPLATE/** so the scaffold stays in git while real brand IP remains private. Copy the template into /BRANDS/{brand}/ (and project paths), then replace placeholders. Document usage in BRANDS/README.md, README.md, and AGENTS.md. Never treat _TEMPLATE as a live brand context.  
+  **Pro:** Template lives in the final BRANDS tree  
+  **Pro:** Real brands stay git-ignored  
+  **Pro:** Clear file-purpose docs for agents  
 
 
 ## **[ADR-4.0]** Agent Orchestration & Documentation

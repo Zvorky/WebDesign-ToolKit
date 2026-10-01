@@ -5,6 +5,7 @@ You are operating within the WebDesign-ToolKit, an AI-driven front-end architect
 ## Context Isolation and Design Strategy
 * **Brand Isolation:** NEVER cross-contaminate brand contexts. Read design guidelines, brandbooks, and context exclusively from the requested `/BRANDS/{brand}/` directory.
 * **Project Scope:** Client-specific code, application logic, and component generation must reside strictly within `/BRANDS/{brand}/Projects/{project_name}/`.
+* **Templates:** When creating a new brand or project, copy from `/BRANDS/_TEMPLATE/` or `/BRANDS/_TEMPLATE/Projects/_TEMPLATE/` (see `/BRANDS/README.md`). Do not invent a different folder layout. Never use `_TEMPLATE` as a live brand context. Template Markdown files are descriptive placeholders — replace them with real content after copying.
 * **Guideline Fallback Hierarchy:** Design rules must be applied in the following strict order of precedence: **Project Guidelines** > **Brand Guidelines** > **Vercel Guidelines** (default fallback). 
 * **Explicit Declarations:** If a Project or Brand possesses its own custom design rules, this must be explicitly stated within their respective `DESIGN.md` file.
 

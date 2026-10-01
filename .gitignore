@@ -1,5 +1,9 @@
 # Brand Context & Global History (IP Isolation)
-/BRANDS/
+# Ignore all brand IP, but keep the versioned scaffold tracked.
+/BRANDS/*
+!/BRANDS/README.md
+!/BRANDS/_TEMPLATE/
+!/BRANDS/_TEMPLATE/**
 /history/
 
 # Provisioned locally by setup.sh
