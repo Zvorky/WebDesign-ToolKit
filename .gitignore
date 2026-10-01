@@ -11,6 +11,3 @@
 /vendor/
 TOOLS.md
 skills-lock.json
-
-# Legacy (removed — skills now live in .agents/skills/)
-/SKILLS/
