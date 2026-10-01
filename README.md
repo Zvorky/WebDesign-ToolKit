@@ -91,6 +91,7 @@ Guideline precedence remains: **Project > Brand > Vercel**.
 | Tool / Skill | Link | License & Usage |
 | :--- | :--- | :--- |
 | **Taste Skill** | [tasteskill.dev](https://www.tasteskill.dev/) | MIT License. Open source constraint guidelines to enforce design quality. |
+| **BrandBooker** | [zvorky/brandbooker](https://github.com/zvorky/brandbooker) | Brand system skill set. Use on request only; run `brandbook-review` whenever a brand is added or updated. |
 | **awesome-design-md** | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) | Open source reference for plain-text design constraints and brand systems. |
 | **Originkit** | [originkit.dev](https://www.originkit.dev/) | Open source. Free components; MCP server requires an API key (10 free requests/day). |
 | **Cult UI** | [cult-ui.com](https://www.cult-ui.com/) | MIT License. Free for commercial/personal use, no attribution required. |

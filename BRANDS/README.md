@@ -36,3 +36,7 @@ cp -a BRANDS/_TEMPLATE/Projects/_TEMPLATE/. "BRANDS/${BRAND}/Projects/${PROJECT}
 Each template Markdown file describes **what that file is for**. Replace placeholders with real content after copying.
 
 Guideline precedence: **Project > Brand > Vercel**.
+
+## After creating or updating a brand
+
+Ask the agent to run **BrandBooker `brandbook-review`** on that brand folder. Other BrandBooker skills (orchestrator, philosophy, identity, etc.) should be used only when you explicitly want a brandbook authored or expanded. See [`docs/tools/brandbooker/SETUP.md`](../docs/tools/brandbooker/SETUP.md).

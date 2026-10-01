@@ -344,6 +344,31 @@ else
   record_tool "Vercel Guidelines" "failed" "\`npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines\`" "See docs/tools/vercel-guidelines/SETUP.md"
 fi
 
+# BrandBooker skill set (on-demand authorship; brandbook-review is mandatory on brand add/update)
+log "Installing BrandBooker skill set"
+BRANDBOOKER_REPO="https://github.com/zvorky/brandbooker"
+BRANDBOOKER_OK=1
+for skill in \
+  brandbook-orchestrator \
+  design-philosophy \
+  brand-architecture \
+  visual-identity \
+  color-typography \
+  human-interface \
+  packaging-experience \
+  brand-governance \
+  brandbook-review
+do
+  if ! install_agent_skill "$BRANDBOOKER_REPO" "$skill"; then
+    BRANDBOOKER_OK=0
+  fi
+done
+if [[ "$BRANDBOOKER_OK" -eq 1 ]]; then
+  record_tool "BrandBooker" "installed" "\`.agents/skills/{brandbook-orchestrator,brandbook-review,…}/\`; \`npx skills add https://github.com/zvorky/brandbooker --skill '*'\`" "On-demand except brandbook-review on brand add/update — see docs/tools/brandbooker/SETUP.md"
+else
+  record_tool "BrandBooker" "partial" "\`npx skills add https://github.com/zvorky/brandbooker --skill '*'\`" "One or more BrandBooker skills failed — see docs/tools/brandbooker/SETUP.md"
+fi
+
 if [[ -f "$ROOT_DIR/skills-lock.json" ]]; then
   record_tool "skills CLI" "installed" "\`npx skills ls\`; restore: \`npx skills experimental_install\`" "Lockfile: \`skills-lock.json\` (git-ignored)"
 else

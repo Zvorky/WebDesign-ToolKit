@@ -23,7 +23,7 @@
 
 
 ## **[ADR-2.0]** Design System & Component Sourcing
-**Created at:** 2026-10-01T13:15:11 | **Modified at:** 2026-10-01T15:54:15  
+**Created at:** 2026-10-01T13:15:11 | **Modified at:** 2026-10-01T17:26:08  
 
 **Description:** Decisions about visual guidelines, aesthetic enforcement, and how UI building blocks are sourced for LLM-friendly generation.  
 
@@ -61,6 +61,14 @@
   **Pro:** Single install path for agents and setup.sh  
   **Pro:** Lockfile enables reproducible skill restores  
   **Con:** Skills are local/git-ignored rather than versioned in-repo  
+
+- ### **[ADR-2.5]** BrandBooker Skill Set (On-Demand + Mandatory Review)  
+  **Modified at:** 2026-10-01T17:26:08  
+  **Problem:** Brand authorship skills must not inflate every UI generation session, but new or updated brand contexts still need a critical audit against a coherent brand-system rubric.  
+  **Decision:** Install the BrandBooker skill set from https://github.com/zvorky/brandbooker via setup.sh into .agents/skills/. Agents may load BrandBooker authorship/specialist skills only when the user explicitly requests brandbook or brand-system work. Whenever a brand is added or materially updated under /BRANDS/{brand}/, agents must run brandbook-review against that single brand context. Document usage in docs/tools/brandbooker/SETUP.md and AGENTS.md.  
+  **Pro:** Keeps ordinary UI sessions lean  
+  **Pro:** Enforces quality gates on brand add/update  
+  **Pro:** Centralizes brand OS rules in a dedicated skill set  
 
 
 ## **[ADR-3.0]** Repository Structure & Brand Isolation

@@ -43,7 +43,7 @@ categories:
   description: Decisions about visual guidelines, aesthetic enforcement, and how UI
     building blocks are sourced for LLM-friendly generation.
   created_at: '2026-10-01T13:15:11'
-  modified_at: '2026-10-01T15:54:15'
+  modified_at: '2026-10-01T17:26:08'
   decisions:
   - id: 1
     title: Semantic Design Guidelines (DESIGN.md)
@@ -111,6 +111,25 @@ categories:
     cons:
     - Skills are local/git-ignored rather than versioned in-repo
     modified_at: '2026-10-01T15:54:15'
+    sub_decisions: []
+    deprecated: false
+  - id: 5
+    title: BrandBooker Skill Set (On-Demand + Mandatory Review)
+    problem: Brand authorship skills must not inflate every UI generation session,
+      but new or updated brand contexts still need a critical audit against a coherent
+      brand-system rubric.
+    decision: Install the BrandBooker skill set from https://github.com/zvorky/brandbooker
+      via setup.sh into .agents/skills/. Agents may load BrandBooker authorship/specialist
+      skills only when the user explicitly requests brandbook or brand-system work.
+      Whenever a brand is added or materially updated under /BRANDS/{brand}/, agents
+      must run brandbook-review against that single brand context. Document usage
+      in docs/tools/brandbooker/SETUP.md and AGENTS.md.
+    pros:
+    - Keeps ordinary UI sessions lean
+    - Enforces quality gates on brand add/update
+    - Centralizes brand OS rules in a dedicated skill set
+    cons: []
+    modified_at: '2026-10-01T17:26:08'
     sub_decisions: []
     deprecated: false
   deprecated: false

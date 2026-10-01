@@ -85,6 +85,8 @@ Then edit:
 
 You can bootstrap `DESIGN.md` from `vendor/awesome-design-md/` after setup, or write your own.
 
+After adding or materially updating a brand (`brandbook.md`, `DESIGN.md`, or other identity docs), have the agent run **BrandBooker `brandbook-review`** against that brand. Other BrandBooker skills are **on demand** only — ask for them when you want a full brandbook authored. See [`docs/tools/brandbooker/SETUP.md`](./tools/brandbooker/SETUP.md).
+
 ### Create a project
 
 ```bash
@@ -132,6 +134,7 @@ Useful agent skills after setup:
 
 - **design-taste-frontend** (Taste Skill) — anti-slop layout/aesthetic rules  
 - **web-design-guidelines** — Vercel interface guidelines as fallback  
+- **BrandBooker** — brandbook authorship on request; **`brandbook-review`** whenever a brand is added or updated  
 
 ---
 
@@ -141,6 +144,7 @@ Useful agent skills after setup:
 | :--- | :--- |
 | Local install paths / status | `TOOLS.md` (after `setup.sh`) |
 | Taste / anti-slop skill | [`docs/tools/taste-skill/SETUP.md`](./tools/taste-skill/SETUP.md) |
+| Brandbook authorship & review | [`docs/tools/brandbooker/SETUP.md`](./tools/brandbooker/SETUP.md) |
 | Ready-made `DESIGN.md` examples | [`docs/tools/awesome-design-md/SETUP.md`](./tools/awesome-design-md/SETUP.md) |
 | Motion / MCP components | [`docs/tools/originkit/SETUP.md`](./tools/originkit/SETUP.md) |
 | shadcn-style UI kits | [`docs/tools/cult-ui/SETUP.md`](./tools/cult-ui/SETUP.md), [`docs/tools/skiper-ui/SETUP.md`](./tools/skiper-ui/SETUP.md) |
