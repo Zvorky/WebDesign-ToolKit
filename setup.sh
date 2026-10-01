@@ -394,35 +394,38 @@ fi
 # ---------------------------------------------------------------------------
 
 log "Installing screenshot-to-code"
-clone_or_update "https://github.com/abi/screenshot-to-code.git" "$VENDOR_DIR/screenshot-to-code"
-
 STC_BACKEND_OK=0
 STC_FRONTEND_OK=0
 
-log "Installing screenshot-to-code backend (Poetry)"
-(
-  cd "$VENDOR_DIR/screenshot-to-code/backend"
-  ensure_poetry_python_for_stc || true
-  poetry install --no-interaction
-  # Preview Chromium for upstream tool only — not the toolkit test stack.
-  poetry run playwright install chromium >/dev/null 2>&1 \
-    || warn "Playwright Chromium for screenshot-to-code preview skipped (optional for first run)"
-) && STC_BACKEND_OK=1 && ok "screenshot-to-code backend ready" \
-  || warn "screenshot-to-code backend install failed"
+if clone_or_update "https://github.com/abi/screenshot-to-code.git" "$VENDOR_DIR/screenshot-to-code"; then
+  log "Installing screenshot-to-code backend (Poetry)"
+  (
+    cd "$VENDOR_DIR/screenshot-to-code/backend"
+    ensure_poetry_python_for_stc || true
+    poetry install --no-interaction
+    # Preview Chromium for upstream tool only — not the toolkit test stack.
+    poetry run playwright install chromium >/dev/null 2>&1 \
+      || warn "Playwright Chromium for screenshot-to-code preview skipped (optional for first run)"
+  ) && STC_BACKEND_OK=1 && ok "screenshot-to-code backend ready" \
+    || warn "screenshot-to-code backend install failed"
 
-log "Installing screenshot-to-code frontend (pnpm)"
-(
-  cd "$VENDOR_DIR/screenshot-to-code/frontend"
-  pnpm install
-) && STC_FRONTEND_OK=1 && ok "screenshot-to-code frontend ready" \
-  || warn "screenshot-to-code frontend install failed"
+  log "Installing screenshot-to-code frontend (pnpm)"
+  (
+    cd "$VENDOR_DIR/screenshot-to-code/frontend"
+    pnpm install
+  ) && STC_FRONTEND_OK=1 && ok "screenshot-to-code frontend ready" \
+    || warn "screenshot-to-code frontend install failed"
 
-if [[ "$STC_BACKEND_OK" -eq 1 && "$STC_FRONTEND_OK" -eq 1 ]]; then
-  record_tool "screenshot-to-code" "installed" "Backend: \`cd vendor/screenshot-to-code/backend && poetry run uvicorn main:app --reload --port 7001\` · Frontend: \`cd vendor/screenshot-to-code/frontend && pnpm dev\`" "API key in backend/.env"
-elif [[ "$STC_BACKEND_OK" -eq 1 || "$STC_FRONTEND_OK" -eq 1 ]]; then
-  record_tool "screenshot-to-code" "partial" "\`vendor/screenshot-to-code/\` · backend=$STC_BACKEND_OK frontend=$STC_FRONTEND_OK" "See docs/tools/screenshot-to-code/SETUP.md"
+  if [[ "$STC_BACKEND_OK" -eq 1 && "$STC_FRONTEND_OK" -eq 1 ]]; then
+    record_tool "screenshot-to-code" "installed" "Backend: \`cd vendor/screenshot-to-code/backend && poetry run uvicorn main:app --reload --port 7001\` · Frontend: \`cd vendor/screenshot-to-code/frontend && pnpm dev\`" "API key in backend/.env"
+  elif [[ "$STC_BACKEND_OK" -eq 1 || "$STC_FRONTEND_OK" -eq 1 ]]; then
+    record_tool "screenshot-to-code" "partial" "\`vendor/screenshot-to-code/\` · backend=$STC_BACKEND_OK frontend=$STC_FRONTEND_OK" "See docs/tools/screenshot-to-code/SETUP.md"
+  else
+    record_tool "screenshot-to-code" "failed" "\`vendor/screenshot-to-code/\` (clone present)" "Poetry/pnpm install failed — often needs Python ≤3.12"
+  fi
 else
-  record_tool "screenshot-to-code" "failed" "\`vendor/screenshot-to-code/\` (clone only)" "Poetry/pnpm install failed — often needs Python ≤3.12"
+  warn "screenshot-to-code clone failed; skipping backend/frontend install"
+  record_tool "screenshot-to-code" "failed" "\`git clone https://github.com/abi/screenshot-to-code.git\`" "See docs/tools/screenshot-to-code/SETUP.md"
 fi
 
 # ---------------------------------------------------------------------------
@@ -459,21 +462,43 @@ console.log("puppeteer-ok:", await page.title());
 await browser.close();
 EOF
 
+  VISUAL_PKGS_OK=0
+  VISUAL_BROWSER_OK=0
+
   if (
     cd "$VISUAL_DIR"
     pnpm install
-    pnpm exec puppeteer browsers install chrome >/dev/null 2>&1 \
-      || pnpm dlx puppeteer browsers install >/dev/null 2>&1 \
-      || warn "Puppeteer browser download may need a manual: pnpm dlx puppeteer browsers install"
   ); then
+    VISUAL_PKGS_OK=1
+    ok "Visual testing npm packages installed"
+    # Do not use warn as || fallback — warn returns 0 and would mask browser install failure.
+    if (
+      cd "$VISUAL_DIR"
+      pnpm exec puppeteer browsers install chrome >/dev/null 2>&1 \
+        || pnpm dlx puppeteer browsers install >/dev/null 2>&1
+    ); then
+      VISUAL_BROWSER_OK=1
+      ok "Puppeteer browser binary installed"
+    else
+      warn "Puppeteer browser download failed; run manually: cd vendor/visual-testing && pnpm dlx puppeteer browsers install"
+    fi
+  else
+    warn "Visual testing pnpm install failed"
+  fi
+
+  if [[ "$VISUAL_PKGS_OK" -eq 1 && "$VISUAL_BROWSER_OK" -eq 1 ]]; then
     VISUAL_INSTALLED=1
     ok "Visual testing stack ready at vendor/visual-testing"
     record_tool "Puppeteer" "installed (optional)" "\`cd vendor/visual-testing && pnpm test:smoke\`; \`pnpm exec puppeteer\`" "Browser binary via Puppeteer"
     record_tool "Midscene.js" "installed (optional)" "\`@midscene/web\` in \`vendor/visual-testing/\`; \`pnpm exec tsx\`" "Set MIDSCENE_MODEL_* env vars"
+  elif [[ "$VISUAL_PKGS_OK" -eq 1 ]]; then
+    warn "Visual testing packages installed but browser binary is missing"
+    record_tool "Puppeteer" "partial (optional)" "\`cd vendor/visual-testing && pnpm dlx puppeteer browsers install\`" "npm packages ok; browser download failed"
+    record_tool "Midscene.js" "partial (optional)" "\`@midscene/web\` in \`vendor/visual-testing/\`" "Usable only after Puppeteer browser install succeeds"
   else
     warn "Visual testing install failed"
-    record_tool "Puppeteer" "failed (optional)" "\`./setup.sh --with-visual-testing\`" "Install attempt failed"
-    record_tool "Midscene.js" "failed (optional)" "\`./setup.sh --with-visual-testing\`" "Install attempt failed"
+    record_tool "Puppeteer" "failed (optional)" "\`./setup.sh --with-visual-testing\`" "pnpm install failed"
+    record_tool "Midscene.js" "failed (optional)" "\`./setup.sh --with-visual-testing\`" "pnpm install failed"
   fi
 else
   ok "Skipped optional Midscene.js + Puppeteer"
