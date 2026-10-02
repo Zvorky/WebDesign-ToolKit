@@ -299,7 +299,7 @@ p {
 .hero {
   min-height: calc(100dvh - var(--header-h));
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   color: #f4f5f6;
   background-color: var(--color-carbon-black);
   background-image:
@@ -314,7 +314,9 @@ p {
   grid-template-columns: 1.05fr 0.95fr;
   gap: var(--space-6);
   align-items: center;
-  padding-block: var(--space-7);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-7);
+  width: 100%;
 }
 
 .hero-copy .sub {

@@ -3,7 +3,7 @@
   <section class="hero" id="inicio" aria-labelledby="hero-title">
     <div class="container hero-grid">
       <div class="hero-copy">
-        <h1 id="hero-title">Engenharia mecânica diagnóstica e laudos de conformidade.</h1>
+        <h1 id="hero-title">Engenharia diagnóstica e laudos de conformidade.</h1>
         <p class="sub">Vistoria presencial, ensaios comprovados e documentos que o fiscal respeita.</p>
         <div class="hero-ctas">
           <a class="btn btn-primary" href="#contato">Solicitar vistoria</a>
