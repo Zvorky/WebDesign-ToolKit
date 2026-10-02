@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 520" fill="none" aria-hidden="true">
+  <rect width="520" height="520" fill="#1A1C20"/>
+  <!-- blueprint mesh -->
+  <g stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1">
+    <path d="M0 40h520M0 80h520M0 120h520M0 160h520M0 200h520M0 240h520M0 280h520M0 320h520M0 360h520M0 400h520M0 440h520M0 480h520"/>
+    <path d="M40 0v520M80 0v520M120 0v520M160 0v520M200 0v520M240 0v520M280 0v520M320 0v520M360 0v520M400 0v520M440 0v520M480 0v520"/>
+  </g>
+  <!-- vessel -->
+  <g stroke="#E7E9EC" stroke-width="0.75" fill="none">
+    <rect x="168" y="118" width="184" height="268" rx="4"/>
+    <path d="M168 154h184M168 350h184"/>
+    <path d="M200 118v-28h120v28"/>
+    <path d="M228 90h64v12h-64z"/>
+    <circle cx="260" cy="252" r="54"/>
+    <circle cx="260" cy="252" r="22"/>
+    <!-- hex nut -->
+    <path d="M260 198 L306 225 L306 279 L260 306 L214 279 L214 225 Z"/>
+    <path d="M168 390h184"/>
+    <path d="M188 390v18M352 390v18"/>
+  </g>
+  <!-- dimension lines -->
+  <g stroke="#F59E0B" stroke-width="0.75" fill="none">
+    <path d="M140 118v268"/>
+    <path d="M132 118h16M132 386h16"/>
+    <path d="M168 430h184"/>
+    <path d="M168 422v16M352 422v16"/>
+    <path d="M400 198 L446 225 L446 279 L400 306"/>
+  </g>
+  <g fill="#F59E0B" font-family="ui-monospace, monospace" font-size="12" letter-spacing="0.08em">
+    <text x="86" y="258" transform="rotate(-90 86 258)">268 mm</text>
+    <text x="230" y="456">184 mm</text>
+    <text x="408" y="188">60°</text>
+  </g>
+  <g fill="#C9CDD3" font-family="ui-monospace, monospace" font-size="11" letter-spacing="0.12em">
+    <text x="176" y="142">VASO / NR-13</text>
+    <text x="214" y="252">TDX</text>
+  </g>
+</svg>
