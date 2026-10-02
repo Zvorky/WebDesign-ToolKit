@@ -64,7 +64,37 @@
       <h2 id="sobre-title">Sobre o engenheiro</h2>
       <p class="lead">Chão de fábrica, diagnóstico e rigor pericial. A TDX carrega o peso de uma marca institucional com o compromisso pessoal de Thiago Duarte em cada vistoria.</p>
       <figure class="about-figure">
-        <img src="<?php echo htmlspecialchars($asset("assets/img/about-drawing.svg")); ?>" width="640" height="280" alt="Croqui ortogonal de galpão industrial e figura geométrica do engenheiro em campo, com cotas.">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-labelledby="about-drawing-title">
+          <title id="about-drawing-title">Croqui ortogonal de galpão industrial e figura geométrica do engenheiro em campo, com cotas</title>
+          <rect width="640" height="280" fill="#F8F9FA"/>
+          <g stroke="#E5E7EB" stroke-width="1">
+            <path d="M0 40h640M0 80h640M0 120h640M0 160h640M0 200h640M0 240h640"/>
+            <path d="M40 0v280M80 0v280M120 0v280M160 0v280M200 0v280M240 0v280M280 0v280M320 0v280M360 0v280M400 0v280M440 0v280M480 0v280M520 0v280M560 0v280M600 0v280"/>
+          </g>
+          <g stroke="#121316" stroke-width="0.75" fill="none">
+            <path d="M48 220h544"/>
+            <path d="M80 220 V72 h160 l48 40 V220"/>
+            <path d="M240 112 h48 v28 h-48"/>
+            <path d="M112 220 V140 h96 v80"/>
+            <path d="M128 156 h64 v48 h-64z"/>
+            <path d="M80 72 L128 40 H240 L288 72"/>
+            <rect x="420" y="96" width="36" height="44"/>
+            <rect x="428" y="140" width="20" height="64"/>
+            <path d="M428 160h-28v8h28M448 160h28v8h-28"/>
+            <path d="M428 204h-10v16h10M448 204h10v16h-10"/>
+            <circle cx="438" cy="82" r="14"/>
+          </g>
+          <g stroke="#F59E0B" stroke-width="0.75" fill="none">
+            <path d="M80 28h208"/>
+            <path d="M80 20v16M288 20v16"/>
+            <path d="M400 96v124"/>
+            <path d="M392 96h16M392 220h16"/>
+          </g>
+          <g fill="#9A6206" font-family="ui-monospace, monospace" font-size="11" letter-spacing="0.1em">
+            <text x="140" y="22">208 mm</text>
+            <text x="348" y="164">CREA-RS</text>
+          </g>
+        </svg>
       </figure>
       <ul class="pillars">
         <li>
