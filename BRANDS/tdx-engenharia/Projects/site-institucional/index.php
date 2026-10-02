@@ -1,6 +1,7 @@
 <?php require __DIR__ . "/includes/header.php"; ?>
 <main id="conteudo">
-  <section class="hero" id="inicio" aria-labelledby="hero-title">
+  <section class="hero js-plot is-plotting" id="inicio" aria-labelledby="hero-title">
+    <div class="cad-scan" aria-hidden="true"><span></span></div>
     <div class="container hero-grid">
       <div class="hero-copy">
         <h1 id="hero-title">Engenharia diagnóstica e laudos de conformidade.</h1>
@@ -18,20 +19,20 @@
             <path d="M0 40h520M0 80h520M0 120h520M0 160h520M0 200h520M0 240h520"/>
             <path d="M40 0v280M80 0v280M120 0v280M160 0v280M200 0v280M240 0v280M280 0v280M320 0v280M360 0v280M400 0v280M440 0v280M480 0v280"/>
           </g>
-          <g stroke="#E7E9EC" stroke-width="0.75" fill="none">
-            <rect x="168" y="48" width="184" height="168" rx="4"/>
-            <path d="M168 78h184M168 186h184"/>
-            <path d="M200 48v-18h120v18"/>
-            <circle cx="260" cy="132" r="36"/>
-            <path d="M260 96 L292 114 L292 150 L260 168 L228 150 L228 114 Z"/>
+          <g class="cad-ink" stroke="#E7E9EC" stroke-width="0.75" fill="none">
+            <rect pathLength="1" x="168" y="48" width="184" height="168" rx="4"/>
+            <path pathLength="1" d="M168 78h184M168 186h184"/>
+            <path pathLength="1" d="M200 48v-18h120v18"/>
+            <circle pathLength="1" cx="260" cy="132" r="36"/>
+            <path pathLength="1" d="M260 96 L292 114 L292 150 L260 168 L228 150 L228 114 Z"/>
           </g>
-          <g stroke="#F59E0B" stroke-width="0.75" fill="none">
-            <path d="M140 48v168"/>
-            <path d="M132 48h16M132 216h16"/>
-            <path d="M168 240h184"/>
-            <path d="M168 232v16M352 232v16"/>
+          <g class="cad-cota" stroke="#F59E0B" stroke-width="0.75" fill="none">
+            <path pathLength="1" d="M140 48v168"/>
+            <path pathLength="1" d="M132 48h16M132 216h16"/>
+            <path pathLength="1" d="M168 240h184"/>
+            <path pathLength="1" d="M168 232v16M352 232v16"/>
           </g>
-          <g fill="#F59E0B" font-family="ui-monospace, monospace" font-size="12">
+          <g class="cad-labels" fill="#F59E0B" font-family="ui-monospace, monospace" font-size="12">
             <text x="96" y="140" transform="rotate(-90 96 140)">168 mm</text>
             <text x="230" y="262">184 mm</text>
           </g>
@@ -60,7 +61,7 @@
   </section>
 
   <section class="section" id="sobre" aria-labelledby="sobre-title">
-    <div class="container">
+    <div class="container js-reveal">
       <h2 id="sobre-title">Sobre o engenheiro</h2>
       <p class="lead">Chão de fábrica, diagnóstico e rigor pericial. A TDX carrega o peso de uma marca institucional com o compromisso pessoal de Thiago Duarte em cada vistoria.</p>
       <figure class="about-figure">
@@ -71,26 +72,26 @@
             <path d="M0 40h640M0 80h640M0 120h640M0 160h640M0 200h640M0 240h640"/>
             <path d="M40 0v280M80 0v280M120 0v280M160 0v280M200 0v280M240 0v280M280 0v280M320 0v280M360 0v280M400 0v280M440 0v280M480 0v280M520 0v280M560 0v280M600 0v280"/>
           </g>
-          <g stroke="#121316" stroke-width="0.75" fill="none">
-            <path d="M48 220h544"/>
-            <path d="M80 220 V72 h160 l48 40 V220"/>
-            <path d="M240 112 h48 v28 h-48"/>
-            <path d="M112 220 V140 h96 v80"/>
-            <path d="M128 156 h64 v48 h-64z"/>
-            <path d="M80 72 L128 40 H240 L288 72"/>
-            <rect x="420" y="96" width="36" height="44"/>
-            <rect x="428" y="140" width="20" height="64"/>
-            <path d="M428 160h-28v8h28M448 160h28v8h-28"/>
-            <path d="M428 204h-10v16h10M448 204h10v16h-10"/>
-            <circle cx="438" cy="82" r="14"/>
+          <g class="cad-ink" stroke="#121316" stroke-width="0.75" fill="none">
+            <path pathLength="1" d="M48 220h544"/>
+            <path pathLength="1" d="M80 220 V72 h160 l48 40 V220"/>
+            <path pathLength="1" d="M240 112 h48 v28 h-48"/>
+            <path pathLength="1" d="M112 220 V140 h96 v80"/>
+            <path pathLength="1" d="M128 156 h64 v48 h-64z"/>
+            <path pathLength="1" d="M80 72 L128 40 H240 L288 72"/>
+            <rect pathLength="1" x="420" y="96" width="36" height="44"/>
+            <rect pathLength="1" x="428" y="140" width="20" height="64"/>
+            <path pathLength="1" d="M428 160h-28v8h28M448 160h28v8h-28"/>
+            <path pathLength="1" d="M428 204h-10v16h10M448 204h10v16h-10"/>
+            <circle pathLength="1" cx="438" cy="82" r="14"/>
           </g>
-          <g stroke="#F59E0B" stroke-width="0.75" fill="none">
-            <path d="M80 28h208"/>
-            <path d="M80 20v16M288 20v16"/>
-            <path d="M400 96v124"/>
-            <path d="M392 96h16M392 220h16"/>
+          <g class="cad-cota" stroke="#F59E0B" stroke-width="0.75" fill="none">
+            <path pathLength="1" d="M80 28h208"/>
+            <path pathLength="1" d="M80 20v16M288 20v16"/>
+            <path pathLength="1" d="M400 96v124"/>
+            <path pathLength="1" d="M392 96h16M392 220h16"/>
           </g>
-          <g fill="#9A6206" font-family="ui-monospace, monospace" font-size="11" letter-spacing="0.1em">
+          <g class="cad-labels" fill="#9A6206" font-family="ui-monospace, monospace" font-size="11" letter-spacing="0.1em">
             <text x="140" y="22">208 mm</text>
             <text x="348" y="164">CREA-RS</text>
           </g>
@@ -114,7 +115,7 @@
   </section>
 
   <section class="section section-alt" id="servicos" aria-labelledby="servicos-title">
-    <div class="container">
+    <div class="container js-reveal">
       <p class="eyebrow">Portfólio normativo</p>
       <h2 id="servicos-title">Cinco frentes, nomes funcionais</h2>
       <p class="lead">A marca proíbe nomes fantasiosos. O portfólio segue a taxonomia do brandbook.</p>
@@ -149,7 +150,7 @@
   </section>
 
   <section class="section" id="conduta" aria-labelledby="conduta-title">
-    <div class="container">
+    <div class="container js-reveal">
       <h2 id="conduta-title">O que a TDX recusa</h2>
       <p class="lead">Três proibições éticas. Sem elas o laudo não vale o papel.</p>
       <ol class="refusals">
@@ -169,8 +170,9 @@
     </div>
   </section>
 
-  <section class="section contact" id="contato" aria-labelledby="contato-title">
-    <div class="container contact-grid">
+  <section class="section contact js-plot" id="contato" aria-labelledby="contato-title">
+    <div class="cad-scan" aria-hidden="true"><span></span></div>
+    <div class="container contact-grid js-reveal">
       <div>
         <h2 id="contato-title">Solicitar vistoria</h2>
         <p class="lead">Canal formal: descreva o equipamento e a cidade. O envio eletrônico ainda não está ligado. E-mail institucional já recebe demanda.</p>

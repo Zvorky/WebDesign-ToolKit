@@ -18,5 +18,6 @@
   </div>
 </footer>
 <script src="<?php echo htmlspecialchars($asset("assets/js/main.js")); ?>"></script>
+<script src="<?php echo htmlspecialchars($asset("assets/js/motion.js")); ?>"></script>
 </body>
 </html>

@@ -4,9 +4,21 @@ Este projeto define **regras customizadas** que sobrescrevem o brand `DESIGN.md`
 
 ## Dials
 
-- `DESIGN_VARIANCE: 5` (split assimétrico, bento 5 células, não caos)
-- `MOTION_INTENSITY: 3` (brand)
+- `DESIGN_VARIANCE: 5`
+- `MOTION_INTENSITY: 6` neste branch experimental (o site publicado permanece em 3)
 - `VISUAL_DENSITY: 4`
+
+## Experimento de motion (este branch)
+
+Motion extra vive em `assets/css/motion.css` e `assets/js/motion.js`, atrás de `prefers-reduced-motion: no-preference`.
+
+- Fundo: deriva lenta da malha blueprint (42s) em header/hero/contato; varredura de plotter amber a 7% de opacidade, pausada fora da viewport
+- Croqui: traço com `pathLength=1` (vaso no hero, galpão no sobre)
+- Entrada: fade/translate 14px no hero e `js-reveal` via IntersectionObserver (sem listener de scroll)
+- Hover: sublinhado amber na nav, células de serviço `-3px`, pilares `translateX(4px)`
+- Form e leitura não são bloqueados; submit permanece disabled
+
+Reduced motion: sem deriva, sem scan, sem dashoffset, conteúdo opaco.
 
 ## Deltas vs brand
 

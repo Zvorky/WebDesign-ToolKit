@@ -18,7 +18,13 @@ $waMsg = "Olá Eng. Thiago, preciso de uma vistoria/laudo técnico para minha em
   <meta name="description" content="TDX Engenharia. Laudos NR-12, NR-13, NR-11, PMOC e perícias. Eng. Thiago Duarte, CREA-RS. Lagoa Vermelha, Passo Fundo e Região Norte do RS.">
   <link rel="icon" href="<?php echo htmlspecialchars($asset("assets/img/favicon.svg")); ?>" type="image/svg+xml">
   <link rel="preload" href="<?php echo htmlspecialchars($asset("assets/fonts/inter-latin-variable.woff2")); ?>" as="font" type="font/woff2" crossorigin>
+  <script>
+    if (window.matchMedia && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("motion-ready");
+    }
+  </script>
   <link rel="stylesheet" href="<?php echo htmlspecialchars($asset("assets/css/style.css")); ?>">
+  <link rel="stylesheet" href="<?php echo htmlspecialchars($asset("assets/css/motion.css")); ?>">
 </head>
 <body>
 <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
