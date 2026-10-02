@@ -439,8 +439,11 @@ p {
   background: var(--color-surface-subtle);
 }
 
-.about-figure img {
+.about-figure img,
+.about-figure svg {
   width: 100%;
+  height: auto;
+  display: block;
 }
 
 .pillars {
