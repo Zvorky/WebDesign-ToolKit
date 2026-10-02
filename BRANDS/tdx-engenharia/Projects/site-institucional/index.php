@@ -11,7 +11,31 @@
         </div>
       </div>
       <aside class="hero-panel" aria-label="Resumo técnico">
-        <img class="hero-drawing" src="<?php echo htmlspecialchars($asset("assets/img/hero-drawing.svg")); ?>" width="520" height="520" alt="Desenho técnico de vaso de pressão com cotas em milímetros e chanfro de 60 graus.">
+        <svg class="hero-drawing" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 280" width="520" height="280" role="img" aria-labelledby="hero-drawing-title">
+          <title id="hero-drawing-title">Croqui de vaso de pressão com cotas em milímetros e chanfro de 60 graus</title>
+          <rect width="520" height="280" fill="#1A1C20"/>
+          <g stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1">
+            <path d="M0 40h520M0 80h520M0 120h520M0 160h520M0 200h520M0 240h520"/>
+            <path d="M40 0v280M80 0v280M120 0v280M160 0v280M200 0v280M240 0v280M280 0v280M320 0v280M360 0v280M400 0v280M440 0v280M480 0v280"/>
+          </g>
+          <g stroke="#E7E9EC" stroke-width="0.75" fill="none">
+            <rect x="168" y="48" width="184" height="168" rx="4"/>
+            <path d="M168 78h184M168 186h184"/>
+            <path d="M200 48v-18h120v18"/>
+            <circle cx="260" cy="132" r="36"/>
+            <path d="M260 96 L292 114 L292 150 L260 168 L228 150 L228 114 Z"/>
+          </g>
+          <g stroke="#F59E0B" stroke-width="0.75" fill="none">
+            <path d="M140 48v168"/>
+            <path d="M132 48h16M132 216h16"/>
+            <path d="M168 240h184"/>
+            <path d="M168 232v16M352 232v16"/>
+          </g>
+          <g fill="#F59E0B" font-family="ui-monospace, monospace" font-size="12">
+            <text x="96" y="140" transform="rotate(-90 96 140)">168 mm</text>
+            <text x="230" y="262">184 mm</text>
+          </g>
+        </svg>
         <dl>
           <dt>Resp.</dt>
           <dd>Eng. Mecânico Thiago Duarte, CREA-RS</dd>
