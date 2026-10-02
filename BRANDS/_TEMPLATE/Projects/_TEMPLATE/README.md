@@ -12,4 +12,6 @@
 - Whether this project has its own `DESIGN.md` overrides
 - Links to staging / production if relevant
 
+**Git:** After copy, `git init` this folder as the **project** repository. Do not push it, and do not add it to the toolkit or brand remotes, unless the user explicitly authorizes publishing this project.
+
 **Agent note:** Generated app code for this project must stay inside this directory (and paths it explicitly owns). Do not write into sibling projects.

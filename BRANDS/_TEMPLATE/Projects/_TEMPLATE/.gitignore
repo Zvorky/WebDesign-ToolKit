@@ -1,0 +1,8 @@
+# This file belongs to the *project* git repository, not the toolkit or brand repo.
+# Do not `git push` this repo to any remote without explicit user authorization.
+node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example

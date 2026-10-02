@@ -1,5 +1,9 @@
 # Architecture Decision Record
 
+This file is the **legacy ADR outline** (`ADR-X.Y` sections 1–5). **New ADRs** are individual files under [`docs/adr/`](./adr/), created with `adr new "…"` ([adr-tools](./tools/adr-tools/SETUP.md)). Do not hand-assign a new `ADR-X.Y` number here. See [0001](./adr/0001-record-architecture-decisions.md).
+
+Amended by [0002. Nested git isolation for brands and projects](./adr/0002-nested-git-isolation-for-brands-and-projects.md).
+
 ## **[ADR-1.0]** Core Architecture & Workflow
 **Created at:** 2026-10-01T13:15:07 | **Modified at:** 2026-10-01T13:15:18  
 
@@ -72,33 +76,38 @@
 
 
 ## **[ADR-3.0]** Repository Structure & Brand Isolation
-**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-01T16:09:59  
+**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-01T23:10:00  
 
 **Description:** Decisions about directory layout, brand IP protection, project segregation, and history tracking.  
 
+**Amended by:** [docs/adr/0002-nested-git-isolation-for-brands-and-projects.md](./adr/0002-nested-git-isolation-for-brands-and-projects.md)
+
 - ### **[ADR-3.1]** Strict Brand Context Isolation (/BRANDS/)  
-  **Modified at:** 2026-10-01T13:15:30  
+  **Modified at:** 2026-10-01T23:10:00  
   **Problem:** Brand-specific configuration mixed into shared repository paths risks IP leakage and causes LLMs to hallucinate or bleed context across design systems.  
-  **Decision:** All brand-specific configuration, DESIGN.md guidelines, brandbooks, and overviews (README.md) must be isolated inside a git-ignored /BRANDS/{brand}/ directory.  
+  **Decision:** All brand-specific configuration, DESIGN.md guidelines, brandbooks, and overviews (README.md) must be isolated inside /BRANDS/{brand}/. That directory is git-ignored on the toolkit remote. Each brand is also its own nested git repository (not a toolkit submodule) and must not be added, force-added, or pushed to the toolkit remote.  
   **Pro:** Protects intellectual property  
   **Pro:** Prevents cross-brand context contamination  
   **Pro:** Gives each brand a clear, isolated source of truth  
+  **Amended by:** [0002](./adr/0002-nested-git-isolation-for-brands-and-projects.md)
 
 - ### **[ADR-3.2]** Three-Tier Decentralized History Tracking  
-  **Modified at:** 2026-10-01T15:54:18  
+  **Modified at:** 2026-10-01T23:10:00  
   **Problem:** A single shared history log mixes toolkit architecture evolution with brand and project design history, and unstructured HISTORY.md files bury decisions without navigable indexes.  
-  **Decision:** Maintain three-tier git-ignored history: (1) /history/ at root for toolkit-wide structural decisions, (2) /BRANDS/{brand}/history/ for brand design evolution, (3) /BRANDS/{brand}/Projects/{project_name}/history/ for project-specific choices. Every decision is a unique Markdown file with an objective name. Each HISTORY.md is index-only (brief descriptions and links), never the full decision text.  
+  **Decision:** Maintain three-tier history: (1) /history/ at root for toolkit-wide structural decisions, versioned in the toolkit repo; (2) /BRANDS/{brand}/history/ for brand design evolution, inside the brand git sub-repository; (3) /BRANDS/{brand}/Projects/{project_name}/history/ for project-specific choices, inside the project git sub-repository. Every decision is a unique Markdown file with an objective name. Each HISTORY.md is index-only (brief descriptions and links), never the full decision text. Brand/project history is never committed to the toolkit remote.  
   **Pro:** Separates toolkit, brand, and project evolution  
   **Pro:** Keeps brand/project history local and private  
   **Pro:** Index-only HISTORY.md stays scannable for agents  
+  **Amended by:** [0002](./adr/0002-nested-git-isolation-for-brands-and-projects.md)
 
 - ### **[ADR-3.3]** Project-Level Segregation  
-  **Modified at:** 2026-10-01T13:15:30  
+  **Modified at:** 2026-10-01T23:10:00  
   **Problem:** Multiple applications under the same brand can share source code or project-specific decisions unintentionally, diluting agent focus and coupling unrelated work.  
-  **Decision:** Introduce a /Projects/ subdirectory within each brand folder as /BRANDS/{brand}/Projects/{project_name}/ so applications do not share source code or project-specific historical decisions.  
+  **Decision:** Introduce a /Projects/ subdirectory within each brand folder as /BRANDS/{brand}/Projects/{project_name}/ so applications do not share source code or project-specific historical decisions. Each project is its own nested git repository. Project trees are not committed to the brand repo (see the brand template .gitignore) or to the toolkit remote.  
   **Pro:** Isolates project contexts for the LLM  
   **Pro:** Prevents cross-project source and history coupling  
   **Pro:** Supports multiple apps per brand cleanly  
+  **Amended by:** [0002](./adr/0002-nested-git-isolation-for-brands-and-projects.md)  
 
 - ### **[ADR-3.4]** Local Vendor Checkouts (/vendor/)  
   **Modified at:** 2026-10-01T15:54:18  
@@ -109,12 +118,13 @@
   **Pro:** Separates vendor code from /BRANDS/ IP  
 
 - ### **[ADR-3.5]** Versioned Brand and Project Templates under /BRANDS/  
-  **Modified at:** 2026-10-01T16:09:59  
+  **Modified at:** 2026-10-01T23:10:00  
   **Problem:** New brand and project folders under git-ignored /BRANDS/ lacked a shared, documented scaffold, so agents and humans invented inconsistent layouts and missing history/DESIGN files.  
-  **Decision:** Keep the versioned Markdown-only scaffolds inside /BRANDS/ itself: /BRANDS/_TEMPLATE/ for brands and /BRANDS/_TEMPLATE/Projects/_TEMPLATE/ for projects. .gitignore ignores /BRANDS/* but un-ignores README.md and _TEMPLATE/** so the scaffold stays in git while real brand IP remains private. Copy the template into /BRANDS/{brand}/ (and project paths), then replace placeholders. Document usage in BRANDS/README.md, README.md, and AGENTS.md. Never treat _TEMPLATE as a live brand context.  
+  **Decision:** Keep the versioned Markdown-only scaffolds inside /BRANDS/ itself: /BRANDS/_TEMPLATE/ for brands and /BRANDS/_TEMPLATE/Projects/_TEMPLATE/ for projects. .gitignore ignores /BRANDS/* but un-ignores README.md and _TEMPLATE/** so the scaffold stays in git while real brand IP remains private. Copy the template into /BRANDS/{brand}/ (and project paths), then replace placeholders and `git init` the brand and project as nested repos. Never force-add gitignored brand paths into the toolkit repo. Document usage in BRANDS/README.md, README.md, and AGENTS.md. Never treat _TEMPLATE as a live brand context.  
   **Pro:** Template lives in the final BRANDS tree  
   **Pro:** Real brands stay git-ignored  
   **Pro:** Clear file-purpose docs for agents  
+  **Amended by:** [0002](./adr/0002-nested-git-isolation-for-brands-and-projects.md)  
 
 
 ## **[ADR-4.0]** Agent Orchestration & Documentation
@@ -123,9 +133,9 @@
 **Description:** Decisions about LLM guidance files, language policy, and how agents are constrained at runtime.  
 
 - ### **[ADR-4.1]** Agent Orchestration via AGENTS.md  
-  **Modified at:** 2026-10-01T15:54:22  
+  **Modified at:** 2026-10-01T23:10:00  
   **Problem:** Without a mandatory root guide, agents lack a single index of tools/skills and may cross-contaminate brand data across executions.  
-  **Decision:** A mandatory AGENTS.md file must be present at the repository root to act as the master guide for the LLM. It indexes available tools/skills, requires reading git-ignored TOOLS.md after setup, enforces loading constraints from /.agents/skills/, and forbids cross-contaminating brand data so the agent only reads one /BRANDS/{brand}/ context per execution.  
+  **Decision:** A mandatory AGENTS.md file must be present at the repository root to act as the master guide for the LLM. It indexes available tools/skills, requires reading git-ignored TOOLS.md after setup, enforces loading constraints from /.agents/skills/, forbids cross-contaminating brand data so the agent only reads one /BRANDS/{brand}/ context per execution, and forbids adding, force-adding, or pushing brand/project trees to the toolkit remote.  
   **Pro:** Provides a single orchestration entrypoint  
   **Pro:** Indexes tools and skills for the agent  
   **Pro:** Enforces one-brand-per-execution isolation  

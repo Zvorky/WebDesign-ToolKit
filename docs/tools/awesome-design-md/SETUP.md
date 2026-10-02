@@ -17,7 +17,7 @@ Or browse the collection online without cloning: https://getdesign.md/
 3. Tell the agent to follow that file for look and feel.
 4. Prefer brand/project `DESIGN.md` over any shared fallback.
 
-Do not commit brand-specific copies into the shared repo; `/BRANDS/` is git-ignored.
+Do not commit brand-specific copies into the toolkit repo. `/BRANDS/{brand}/` is git-ignored; never `git add -f` those paths.
 
 ## Verify
 

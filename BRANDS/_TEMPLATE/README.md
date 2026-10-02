@@ -12,4 +12,6 @@
 - Pointer to `DESIGN.md` as the visual source of truth
 - List of active projects under `Projects/` (names only)
 
+**Git:** After copy, `git init` this folder as the **brand** repository. Do not push it, and do not add it to the toolkit remote, unless the user explicitly authorizes publishing this brand.
+
 **Agent note:** Agents must load this file together with `DESIGN.md` before generating UI for this brand. Do not mix content from other brands.

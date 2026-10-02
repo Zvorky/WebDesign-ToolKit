@@ -9,6 +9,7 @@
 - List each decision as a short bullet with a link to its own Markdown file in this folder.
 - Never paste the full decision text here.
 - Filenames should be objective (e.g. `adoption-new-palette.md`, `retire-serif-display.md`).
+- This folder is recorded in the **brand** git repository, never in the toolkit remote.
 
 ## Decisions
 

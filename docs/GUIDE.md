@@ -3,31 +3,32 @@
 This guide is for **people** using the toolkit day to day. It explains what the repository is, how to set it up, how brands and projects work, and where to look next.
 
 For LLM/agent rules, see [`AGENTS.md`](../AGENTS.md).  
-For architectural decisions (why things are the way they are), see [`ARCHITECTURE.md`](./ARCHITECTURE.md).
+For architectural decisions, see [`ARCHITECTURE.md`](./ARCHITECTURE.md) (legacy outline) and [`adr/`](./adr/) (new ADRs).
 
 ---
 
 ## What this toolkit is
 
-WebDesign-ToolKit is a **documentation-and-infrastructure** repo for building front-end UI with humans and AI agents together. It is not a single app. It is:
+WebDesign-ToolKit is a **documentation-and-infrastructure** repo for building front-end UI with humans and AI agents together. It is not a single app. It is not a place to publish client source. It is:
 
 1. **Rules** so agents do not invent generic “AI slop” and do not mix brand contexts.
 2. **Setup** (`setup.sh`) so tools and skills install the same way on every machine.
-3. **Brand isolation** (`BRANDS/`) so client IP stays local and out of git.
+3. **Brand isolation** (`BRANDS/`) so client IP stays in nested git repos, out of the toolkit remote.
 4. **Curated tools** (component registries, design references, optional visual testing).
 
-You write brand guidelines and project code under `BRANDS/`. Agents read those files and generate UI inside one project at a time.
+You write brand guidelines and project code under `BRANDS/`. Agents read those files and generate UI inside one project at a time. Those folders are **ignored by this git repo**; they get their own `git init` (see [Git isolation](#git-isolation)).
 
 ---
 
 ## Mental model
 
 ```text
-Toolkit (this repo)          Brand context (git-ignored)         One app
-─────────────────────        ───────────────────────────         ────────
-docs/, setup.sh, AGENTS.md   BRANDS/acme/                        Projects/site/
-.agents/skills/              DESIGN.md, brandbook.md             source + optional DESIGN.md
-vendor/ (local installs)     history/                            history/
+Toolkit (this git remote)     Brand git world (nested)            Project git world (nested)
+─────────────────────────     ────────────────────────            ──────────────────────────
+docs/, setup.sh, AGENTS.md    BRANDS/acme/  (git init)            Projects/site/  (git init)
+docs/adr/, /history/          DESIGN.md, brandbook.md             source + optional DESIGN.md
+.agents/skills/               history/  (brand repo only)         history/ (project repo only)
+vendor/ (local installs)
 ```
 
 **Guideline order** (highest wins):
@@ -57,11 +58,19 @@ If `setup.sh` fails for one tool, the rest can still succeed — check `TOOLS.md
 
 ---
 
+## Git isolation
+
+The toolkit remote never receives client trees. After you copy a brand or project template, initialize a nested repo there (`git init`). Do not `git add -f` ignored `/BRANDS/` paths into this repository. Do not open a toolkit PR with brandbooks, assets, or project source.
+
+Publishing a brand or project to GitHub (or any remote) is opt-in: only when you explicitly authorize it for that brand or project.
+
+Enforcement for agents: [`AGENTS.md`](../AGENTS.md). Decision: [ADR 0002](./adr/0002-nested-git-isolation-for-brands-and-projects.md).
+
 ## Working with brands and projects
 
-`BRANDS/` holds real client/brand work and is **mostly git-ignored**. Only the scaffold is tracked:
+`BRANDS/` holds real client/brand work and is **git-ignored on the toolkit remote**. Only the scaffold is tracked:
 
-- [`BRANDS/README.md`](../BRANDS/README.md) — how to copy the template
+- [`BRANDS/README.md`](../BRANDS/README.md) — how to copy the template and `git init` nested repos
 - `BRANDS/_TEMPLATE/` — brand scaffold
 - `BRANDS/_TEMPLATE/Projects/_TEMPLATE/` — project scaffold
 
@@ -72,9 +81,10 @@ BRAND=acme
 mkdir -p "BRANDS/${BRAND}"
 cp -a BRANDS/_TEMPLATE/. "BRANDS/${BRAND}/"
 rm -rf "BRANDS/${BRAND}/Projects/_TEMPLATE"
+git -C "BRANDS/${BRAND}" init
 ```
 
-Then edit:
+Then edit the brand files and run `git init` inside `BRANDS/${BRAND}` (nested repo; not a toolkit submodule).
 
 | File | Role |
 | :--- | :--- |
@@ -94,27 +104,28 @@ BRAND=acme
 PROJECT=marketing-site
 mkdir -p "BRANDS/${BRAND}/Projects/${PROJECT}"
 cp -a BRANDS/_TEMPLATE/Projects/_TEMPLATE/. "BRANDS/${BRAND}/Projects/${PROJECT}/"
+git -C "BRANDS/${BRAND}/Projects/${PROJECT}" init
 ```
 
-Put application source **only** under that project folder. Add a project `DESIGN.md` only when this app must override the brand.
+Put application source **only** under that project folder. Run `git init` inside the project directory. Add a project `DESIGN.md` only when this app must override the brand.
 
 ### Rules of thumb
 
 - Never use `_TEMPLATE` as a live brand when prompting an agent.
 - One brand context per agent session — do not mix `BRANDS/acme` with `BRANDS/other`.
-- Keep secrets and brandbooks out of git; they belong under `BRANDS/` (ignored).
+- Keep secrets and brandbooks out of the toolkit remote; they belong under `BRANDS/` (ignored here, versioned in the brand/project git worlds).
 
 ---
 
 ## Recording decisions (history)
 
-History is **three tiers**, all local/git-ignored except the template examples:
+History is **three tiers**. Only the toolkit tier is committed to this remote:
 
-| Tier | Path |
-| :--- | :--- |
-| Toolkit-wide | `/history/` |
-| Brand | `/BRANDS/{brand}/history/` |
-| Project | `/BRANDS/{brand}/Projects/{project}/history/` |
+| Tier | Path | Git world |
+| :--- | :--- | :--- |
+| Toolkit-wide | `/history/` | This repository |
+| Brand | `/BRANDS/{brand}/history/` | Brand nested repo |
+| Project | `/BRANDS/{brand}/Projects/{project}/history/` | Project nested repo |
 
 At each tier:
 
@@ -163,7 +174,8 @@ Licenses and links are summarized in the [root README](../README.md#curated-tool
 | [Root README](../README.md) | Everyone | Quick start, prerequisites, tool table |
 | **This guide** | Humans | How to use the toolkit day to day |
 | [`AGENTS.md`](../AGENTS.md) | AI agents | Mandatory runtime rules |
-| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Humans + agents | Architecture Decision Records |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Humans + agents | Legacy ADR outline (`ADR-X.Y`) |
+| [`docs/adr/`](./adr/) | Humans + agents | New ADRs (`adr new`) |
 | [`docs/tools/*/SETUP.md`](./tools/) | Humans + agents | Per-tool setup |
 | [`BRANDS/README.md`](../BRANDS/README.md) | Humans | Brand/project template usage |
 

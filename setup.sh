@@ -198,7 +198,7 @@ finalize_tools_md() {
       echo "- Visual testing package: \`$VISUAL_DIR\`"
     fi
     echo "- Per-tool guides: \`docs/tools/*/SETUP.md\`"
-    echo "- Architecture decisions: \`docs/ARCHITECTURE.md\`"
+    echo "- Architecture decisions: \`docs/ARCHITECTURE.md\` (legacy outline); \`docs/adr/\` (adr-tools)"
     echo
   } >> "$TOOLS_MD"
   ok "Finalized $TOOLS_MD"
@@ -387,6 +387,19 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# adr-tools (ADR CLI)
+# ---------------------------------------------------------------------------
+
+log "Installing adr-tools"
+if clone_or_update "https://github.com/npryce/adr-tools.git" "$VENDOR_DIR/adr-tools"; then
+  export PATH="$VENDOR_DIR/adr-tools/src:$PATH"
+  ok "adr: $(resolve_bin adr)"
+  record_tool "adr-tools" "installed" "\`adr\` → $(resolve_bin adr); add \`vendor/adr-tools/src\` to PATH" "New ADRs: \`adr new \"Title\"\` (directory: docs/adr). See docs/tools/adr-tools/SETUP.md"
+else
+  record_tool "adr-tools" "failed" "\`git clone https://github.com/npryce/adr-tools.git vendor/adr-tools\`" "See docs/tools/adr-tools/SETUP.md"
+fi
+
+# ---------------------------------------------------------------------------
 # Originkit CLI
 # ---------------------------------------------------------------------------
 
@@ -542,7 +555,7 @@ echo
 echo "Next steps:"
 echo "  1. Read TOOLS.md for installed binaries and paths"
 echo "  2. Load skills from .agents/skills/ before generating UI"
-echo "  3. Keep brand work inside /BRANDS/{brand}/ (git-ignored)"
+echo "  3. Keep brand/project work in nested git repos under /BRANDS/ — never push them to the toolkit remote"
 if [[ "$VISUAL_INSTALLED" -eq 0 ]]; then
   echo "  4. Optional visual testing: ./setup.sh --with-visual-testing"
 fi
