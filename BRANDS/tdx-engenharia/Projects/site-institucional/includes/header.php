@@ -28,6 +28,7 @@ $waMsg = "Olá Eng. Thiago, preciso de uma vistoria/laudo técnico para minha em
   <noscript>
     <style>
       html.motion-ready .js-reveal,
+      html.motion-ready .js-reveal.is-pending,
       html.motion-ready .js-reveal .pillars li,
       html.motion-ready .js-reveal .service,
       html.motion-ready .js-reveal .refusals li,

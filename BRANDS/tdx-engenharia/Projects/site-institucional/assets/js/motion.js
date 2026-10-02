@@ -33,16 +33,33 @@
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-in");
+            entry.target.classList.remove("is-pending");
             revealIo.unobserve(entry.target);
+          } else {
+            entry.target.classList.add("is-pending");
           }
         });
       },
-      { threshold: 0.18, rootMargin: "0px 0px -6% 0px" }
+      { threshold: 0.12, rootMargin: "0px 0px -4% 0px" }
     );
 
     reveals.forEach(function (el) {
       revealIo.observe(el);
     });
+
+    var hashId = location.hash.slice(1);
+    if (hashId) {
+      var hashEl = document.getElementById(hashId);
+      if (hashEl) {
+        var hashReveal = hashEl.classList.contains("js-reveal")
+          ? hashEl
+          : hashEl.querySelector(".js-reveal");
+        if (hashReveal) {
+          hashReveal.classList.add("is-in");
+          hashReveal.classList.remove("is-pending");
+        }
+      }
+    }
 
     var plotIo = new IntersectionObserver(
       function (entries) {

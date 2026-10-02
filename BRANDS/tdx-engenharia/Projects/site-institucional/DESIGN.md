@@ -14,7 +14,7 @@ Motion extra vive em `assets/css/motion.css` e `assets/js/motion.js`, atrás de 
 
 - Fundo: deriva lenta da malha blueprint (42s) em header/hero/contato; varredura de plotter amber a 7% de opacidade, pausada fora da viewport
 - Croqui: traço com `pathLength=1` (vaso no hero, galpão no sobre)
-- Entrada: H1, subtítulo, CTAs e painel do hero visíveis no primeiro paint (sem fade). Abaixo da dobra, `js-reveal` via IntersectionObserver (sem listener de scroll). Croqui do hero desenha no load.
+- Entrada: H1, subtítulo, CTAs e painel do hero visíveis no primeiro paint (sem fade). Abaixo da dobra, `js-reveal` só some depois que o observer confirma que está fora da tela (`is-pending`); âncoras recebem `is-in` na hora. Croqui do hero desenha no load.
 - Hover: sublinhado amber na nav, células de serviço `-3px`, pilares `translateX(4px)`
 - Form e leitura não são bloqueados; submit permanece disabled
 
