@@ -6,6 +6,14 @@
 
   document.documentElement.classList.add("motion-ready");
 
+  if (typeof reduce.addEventListener === "function") {
+    reduce.addEventListener("change", function () {
+      if (reduce.matches) {
+        document.documentElement.classList.remove("motion-ready");
+      }
+    });
+  }
+
   function observe() {
     var reveals = document.querySelectorAll(".js-reveal");
     var plots = document.querySelectorAll(".js-plot");

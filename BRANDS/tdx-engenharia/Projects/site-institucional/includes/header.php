@@ -25,6 +25,26 @@ $waMsg = "Olá Eng. Thiago, preciso de uma vistoria/laudo técnico para minha em
   </script>
   <link rel="stylesheet" href="<?php echo htmlspecialchars($asset("assets/css/style.css")); ?>">
   <link rel="stylesheet" href="<?php echo htmlspecialchars($asset("assets/css/motion.css")); ?>">
+  <noscript>
+    <style>
+      html.motion-ready .js-reveal,
+      html.motion-ready .js-reveal .pillars li,
+      html.motion-ready .js-reveal .service,
+      html.motion-ready .js-reveal .refusals li,
+      html.motion-ready .hero .cad-labels {
+        opacity: 1;
+        transform: none;
+        animation: none;
+      }
+      html.motion-ready .cad-ink > *,
+      html.motion-ready .cad-cota > * {
+        stroke-dasharray: none;
+        stroke-dashoffset: 0;
+        opacity: 1;
+        animation: none;
+      }
+    </style>
+  </noscript>
 </head>
 <body>
 <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>

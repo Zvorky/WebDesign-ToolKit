@@ -3,6 +3,6 @@
 **Data:** 2026-10-01  
 **Escopo:** branch `cursor/tdx-animacoes-experimentais-daa5` (não o PR do site estático)
 
-**Decisão:** Isolar animações em `motion.css` / `motion.js` para o site TDX já aprovado visualmente. Linguagem: plotter/blueprint (malha que deriva, varredura amber, traço de croqui), não partículas nem gradiente em loop. IntersectionObserver pausa o fundo fora da tela. `prefers-reduced-motion: reduce` desliga tudo o que é decorativo.
+**Decisão:** Isolar animações em `motion.css` / `motion.js` para o site TDX já aprovado visualmente. Linguagem: plotter/blueprint (malha que deriva, varredura amber, traço de croqui), não partículas nem gradiente em loop. IntersectionObserver pausa o fundo fora da tela. `prefers-reduced-motion: reduce` desliga tudo o que é decorativo. H1, subtítulo, CTAs e painel do hero permanecem opacos no primeiro paint — só o croqui desenha; fade de copy escondia a mensagem aprovada.
 
-**Alternativas rejeitadas:** canvas/rAF contínuo, GSAP, parallax ligado a `scroll`, pulse infinito no WhatsApp, misturar o experimento no PR `cursor/tdx-engenharia-website-daa5`.
+**Alternativas rejeitadas:** canvas/rAF contínuo, GSAP, parallax ligado a `scroll`, pulse infinito no WhatsApp, fade do H1/CTAs no hero, misturar o experimento no PR `cursor/tdx-engenharia-website-daa5`.
