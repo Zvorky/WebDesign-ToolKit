@@ -34,38 +34,6 @@ html.motion-ready .js-reveal.is-in {
     transform 0.55s var(--ease);
 }
 
-html.motion-ready .js-reveal.is-pending .pillars li,
-html.motion-ready .js-reveal.is-pending .service,
-html.motion-ready .js-reveal.is-pending .refusals li {
-  opacity: 0;
-}
-
-html.motion-ready .js-reveal.is-in .pillars li:nth-child(1),
-html.motion-ready .js-reveal.is-in .service:nth-child(1),
-html.motion-ready .js-reveal.is-in .refusals li:nth-child(1) {
-  animation: cad-fade-in 0.5s var(--ease) 0.06s both;
-}
-
-html.motion-ready .js-reveal.is-in .pillars li:nth-child(2),
-html.motion-ready .js-reveal.is-in .service:nth-child(2),
-html.motion-ready .js-reveal.is-in .refusals li:nth-child(2) {
-  animation: cad-fade-in 0.5s var(--ease) 0.12s both;
-}
-
-html.motion-ready .js-reveal.is-in .pillars li:nth-child(3),
-html.motion-ready .js-reveal.is-in .service:nth-child(3),
-html.motion-ready .js-reveal.is-in .refusals li:nth-child(3) {
-  animation: cad-fade-in 0.5s var(--ease) 0.18s both;
-}
-
-html.motion-ready .js-reveal.is-in .service:nth-child(4) {
-  animation: cad-fade-in 0.5s var(--ease) 0.24s both;
-}
-
-html.motion-ready .js-reveal.is-in .service:nth-child(5) {
-  animation: cad-fade-in 0.5s var(--ease) 0.3s both;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .site-header,
   .hero.is-plotting,
@@ -246,9 +214,6 @@ html.motion-ready .js-reveal.is-in .service:nth-child(5) {
   html.motion-ready .js-reveal,
   html.motion-ready .js-reveal.is-in,
   html.motion-ready .js-reveal.is-pending,
-  html.motion-ready .js-reveal .pillars li,
-  html.motion-ready .js-reveal .service,
-  html.motion-ready .js-reveal .refusals li,
   html.motion-ready .hero .cad-labels,
   html.motion-ready .js-reveal .cad-labels {
     opacity: 1;
