@@ -9,6 +9,7 @@
 - Brief bullets + links to unique decision files in this folder
 - No full decision text in the index
 - Keep brand-wide decisions in `/BRANDS/{brand}/history/` instead
+- This folder is recorded in the **project** git repository, never in the toolkit remote.
 
 ## Decisions
 

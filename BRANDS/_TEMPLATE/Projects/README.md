@@ -8,6 +8,7 @@
 
 - Hold one subdirectory per application or deliverable: `Projects/{project_name}/`
 - Keep project source, project `DESIGN.md` overrides, and project history isolated
+- Give each project its own git repository (see `/BRANDS/README.md`); this brand repo ignores `Projects/*/` except the `_TEMPLATE` scaffold
 - Prevent multiple apps for the same brand from sharing code or decision logs accidentally
 
 **How to add a project:** Copy `BRANDS/_TEMPLATE/Projects/_TEMPLATE/` into `Projects/{project_name}/` (see `/BRANDS/README.md`).

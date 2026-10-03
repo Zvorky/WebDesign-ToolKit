@@ -1,0 +1,7 @@
+# This file belongs to the *brand* git repository, not the toolkit.
+# Nested project directories are their own git worlds (except the scaffold
+# copy of Projects/_TEMPLATE, which the toolkit must keep tracked).
+# Do not `git push` this repo to any remote without explicit user authorization.
+/Projects/*/
+!/Projects/_TEMPLATE/
+!/Projects/_TEMPLATE/**

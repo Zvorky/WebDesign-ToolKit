@@ -1,10 +1,14 @@
-# Brand Context & Global History (IP Isolation)
-# Ignore all brand IP, but keep the versioned scaffold tracked.
+# Brand Context (IP Isolation)
+# Ignore all brand IP and nested brand/project git worlds.
+# Track only the versioned scaffold. NEVER force-add ignored paths
+# (git add -f) into the toolkit repository. Never add brands as submodules.
 /BRANDS/*
 !/BRANDS/README.md
 !/BRANDS/_TEMPLATE/
 !/BRANDS/_TEMPLATE/**
-/history/
+
+# Toolkit-wide /history/ is versioned in this repo (not brand IP).
+# Brand and project history folders live under /BRANDS/ and stay ignored.
 
 # Provisioned locally by setup.sh
 /.agents/skills/

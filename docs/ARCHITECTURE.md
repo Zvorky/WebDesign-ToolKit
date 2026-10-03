@@ -72,30 +72,30 @@
 
 
 ## **[ADR-3.0]** Repository Structure & Brand Isolation
-**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-01T16:09:59  
+**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-03T00:59:31  
 
 **Description:** Decisions about directory layout, brand IP protection, project segregation, and history tracking.  
 
 - ### **[ADR-3.1]** Strict Brand Context Isolation (/BRANDS/)  
-  **Modified at:** 2026-10-01T13:15:30  
+  **Modified at:** 2026-10-03T00:59:22  
   **Problem:** Brand-specific configuration mixed into shared repository paths risks IP leakage and causes LLMs to hallucinate or bleed context across design systems.  
-  **Decision:** All brand-specific configuration, DESIGN.md guidelines, brandbooks, and overviews (README.md) must be isolated inside a git-ignored /BRANDS/{brand}/ directory.  
+  **Decision:** All brand-specific configuration, DESIGN.md guidelines, brandbooks, and overviews (README.md) must be isolated inside /BRANDS/{brand}/. That directory is git-ignored on the toolkit remote. Each brand is also its own nested git repository (not a toolkit submodule) and must not be added, force-added, or pushed to the toolkit remote.  
   **Pro:** Protects intellectual property  
   **Pro:** Prevents cross-brand context contamination  
   **Pro:** Gives each brand a clear, isolated source of truth  
 
 - ### **[ADR-3.2]** Three-Tier Decentralized History Tracking  
-  **Modified at:** 2026-10-01T15:54:18  
+  **Modified at:** 2026-10-03T00:59:22  
   **Problem:** A single shared history log mixes toolkit architecture evolution with brand and project design history, and unstructured HISTORY.md files bury decisions without navigable indexes.  
-  **Decision:** Maintain three-tier git-ignored history: (1) /history/ at root for toolkit-wide structural decisions, (2) /BRANDS/{brand}/history/ for brand design evolution, (3) /BRANDS/{brand}/Projects/{project_name}/history/ for project-specific choices. Every decision is a unique Markdown file with an objective name. Each HISTORY.md is index-only (brief descriptions and links), never the full decision text.  
+  **Decision:** Maintain three-tier history: (1) /history/ at root for toolkit-wide structural decisions, versioned in the toolkit repo; (2) /BRANDS/{brand}/history/ for brand design evolution, inside the brand git sub-repository; (3) /BRANDS/{brand}/Projects/{project_name}/history/ for project-specific choices, inside the project git sub-repository. Every decision is a unique Markdown file with an objective name. Each HISTORY.md is index-only (brief descriptions and links), never the full decision text. Brand/project history is never committed to the toolkit remote.  
   **Pro:** Separates toolkit, brand, and project evolution  
   **Pro:** Keeps brand/project history local and private  
   **Pro:** Index-only HISTORY.md stays scannable for agents  
 
 - ### **[ADR-3.3]** Project-Level Segregation  
-  **Modified at:** 2026-10-01T13:15:30  
+  **Modified at:** 2026-10-03T00:59:23  
   **Problem:** Multiple applications under the same brand can share source code or project-specific decisions unintentionally, diluting agent focus and coupling unrelated work.  
-  **Decision:** Introduce a /Projects/ subdirectory within each brand folder as /BRANDS/{brand}/Projects/{project_name}/ so applications do not share source code or project-specific historical decisions.  
+  **Decision:** Introduce a /Projects/ subdirectory within each brand folder as /BRANDS/{brand}/Projects/{project_name}/ so applications do not share source code or project-specific historical decisions. Each project is its own nested git repository. Project trees are not committed to the brand repo (see the brand template .gitignore) or to the toolkit remote.  
   **Pro:** Isolates project contexts for the LLM  
   **Pro:** Prevents cross-project source and history coupling  
   **Pro:** Supports multiple apps per brand cleanly  
@@ -109,23 +109,31 @@
   **Pro:** Separates vendor code from /BRANDS/ IP  
 
 - ### **[ADR-3.5]** Versioned Brand and Project Templates under /BRANDS/  
-  **Modified at:** 2026-10-01T16:09:59  
+  **Modified at:** 2026-10-03T00:59:23  
   **Problem:** New brand and project folders under git-ignored /BRANDS/ lacked a shared, documented scaffold, so agents and humans invented inconsistent layouts and missing history/DESIGN files.  
-  **Decision:** Keep the versioned Markdown-only scaffolds inside /BRANDS/ itself: /BRANDS/_TEMPLATE/ for brands and /BRANDS/_TEMPLATE/Projects/_TEMPLATE/ for projects. .gitignore ignores /BRANDS/* but un-ignores README.md and _TEMPLATE/** so the scaffold stays in git while real brand IP remains private. Copy the template into /BRANDS/{brand}/ (and project paths), then replace placeholders. Document usage in BRANDS/README.md, README.md, and AGENTS.md. Never treat _TEMPLATE as a live brand context.  
+  **Decision:** Keep the versioned Markdown-only scaffolds inside /BRANDS/ itself: /BRANDS/_TEMPLATE/ for brands and /BRANDS/_TEMPLATE/Projects/_TEMPLATE/ for projects. .gitignore ignores /BRANDS/* but un-ignores README.md and _TEMPLATE/** so the scaffold stays in git while real brand IP remains private. Copy the template into /BRANDS/{brand}/ (and project paths), then replace placeholders and git init the brand and project as nested repos. Never force-add gitignored brand paths into the toolkit repo. Document usage in BRANDS/README.md, README.md, and AGENTS.md. Never treat _TEMPLATE as a live brand context.  
   **Pro:** Template lives in the final BRANDS tree  
   **Pro:** Real brands stay git-ignored  
   **Pro:** Clear file-purpose docs for agents  
 
+- ### **[ADR-3.6]** Nested Git Isolation for Brands and Projects  
+  **Modified at:** 2026-10-03T00:59:31  
+  **Problem:** The toolkit git remote is a public documentation-and-infrastructure repository. Brand IP, brandbooks, assets, and project source are client work. Putting them on the toolkit remote (including via git add -f on gitignored paths, git submodules, or a review PR) leaks client files and mixes two unrelated git histories. Cloud-agent and PR instructions that say commit, push, open a PR must not outrank that isolation.  
+  **Decision:** Treat brands/projects and the toolkit as separate git worlds. Each brand is its own nested git repository at /BRANDS/{brand}/ (git init after copying BRANDS/_TEMPLATE/). Each project is its own nested git repository at /BRANDS/{brand}/Projects/{project}/. Neither is a git submodule of the toolkit and neither is committed into the toolkit repo. Do not git push a brand or project to any remote, create a GitHub repository, or open a public PR for that work unless the user explicitly authorizes publishing that brand or project in that conversation. /BRANDS/* stays gitignored except BRANDS/README.md and BRANDS/_TEMPLATE/**. Never force-add gitignored paths. If cloud-agent, CI, or open a public PR instructions conflict with this isolation, follow isolation. A public toolkit PR may contain only toolkit files.  
+  **Pro:** Client work can live on disk next to the toolkit without entering origin  
+  **Pro:** Agents git init brand and project folders instead of adding them to the toolkit index  
+  **Pro:** Publishing a client remote is explicit per-conversation permission, not an implied PR step  
+
 
 ## **[ADR-4.0]** Agent Orchestration & Documentation
-**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-01T15:54:22  
+**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-03T00:59:23  
 
 **Description:** Decisions about LLM guidance files, language policy, and how agents are constrained at runtime.  
 
 - ### **[ADR-4.1]** Agent Orchestration via AGENTS.md  
-  **Modified at:** 2026-10-01T15:54:22  
+  **Modified at:** 2026-10-03T00:59:23  
   **Problem:** Without a mandatory root guide, agents lack a single index of tools/skills and may cross-contaminate brand data across executions.  
-  **Decision:** A mandatory AGENTS.md file must be present at the repository root to act as the master guide for the LLM. It indexes available tools/skills, requires reading git-ignored TOOLS.md after setup, enforces loading constraints from /.agents/skills/, and forbids cross-contaminating brand data so the agent only reads one /BRANDS/{brand}/ context per execution.  
+  **Decision:** A mandatory AGENTS.md file must be present at the repository root to act as the master guide for the LLM. It indexes available tools/skills, requires reading git-ignored TOOLS.md after setup, enforces loading constraints from /.agents/skills/, forbids cross-contaminating brand data so the agent only reads one /BRANDS/{brand}/ context per execution, and forbids adding, force-adding, or pushing brand/project trees to the toolkit remote.  
   **Pro:** Provides a single orchestration entrypoint  
   **Pro:** Indexes tools and skills for the agent  
   **Pro:** Enforces one-brand-per-execution isolation  
@@ -148,7 +156,7 @@
 
 
 ## **[ADR-5.0]** Tooling, Testing & Provisioning
-**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-01T15:54:33  
+**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-03T01:26:53  
 
 **Description:** Decisions about UI testing strategy, forbidden tooling, and environment setup automation.  
 
@@ -211,5 +219,13 @@
   **Pro:** Keeps global docs English and discoverable  
   **Pro:** Separates ADR history from how-to guides  
   **Pro:** One folder per tool  
+
+- ### **[ADR-5.7]** Architecture Decisions via zvorky/adrtools  
+  **Modified at:** 2026-10-03T01:26:53  
+  **Problem:** A substitute ADR CLI (npryce/adr-tools) was cloned into vendor and used to create a parallel docs/adr/ file tree, splitting the source of truth from docs/.adr plus docs/ARCHITECTURE.md and ignoring the already-installed adrtools binary from github.com/zvorky/adrtools.  
+  **Decision:** The only ADR tool for this repository is github.com/zvorky/adrtools (the adrtools CLI). It is a host/system binary, not a toolkit-provisioned tool: do not add docs/tools/adrtools, do not vendor it via setup.sh, and do not list it among curated toolkit tools. Usage belongs in AGENTS.md. Records live in docs/.adr and are rendered to docs/ARCHITECTURE.md. Agents must run adrtools from the docs/ directory. Never clone or invoke npryce/adr-tools, never use adr new, never create a parallel docs/adr/ numbered-file layout, and never hand-edit ARCHITECTURE.md numbering.  
+  **Pro:** Single source of truth in docs/.adr and docs/ARCHITECTURE.md  
+  **Pro:** Uses the toolkit author CLI already installed on the machine  
+  **Pro:** Stops agents from inventing a second ADR workflow  
 
 
