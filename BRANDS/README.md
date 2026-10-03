@@ -2,7 +2,7 @@
 
 Git-ignored home for brand IP and project code on the **toolkit** remote. The only tracked entries here are this README and the `_TEMPLATE/` scaffold.
 
-Each **brand** and each **project** is a nested git repository (its own git world). Never add those trees to the toolkit index, never `git add -f`, never open a toolkit PR with client files. Do not push a brand or project remote unless the user explicitly authorizes that publish. See [`AGENTS.md`](../AGENTS.md) and [ADR 0002](../docs/adr/0002-nested-git-isolation-for-brands-and-projects.md).
+Each **brand** and each **project** is a nested git repository (its own git world). Never add those trees to the toolkit index, never `git add -f`, never open a toolkit PR with client files. Do not push a brand or project remote unless the user explicitly authorizes that publish. See [`AGENTS.md`](../AGENTS.md) and [ADR-3.6](../docs/ARCHITECTURE.md).
 
 ## Create a brand from the template
 
