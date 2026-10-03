@@ -154,7 +154,6 @@ Useful agent skills after setup:
 | Need | Start here |
 | :--- | :--- |
 | Local install paths / status | `TOOLS.md` (after `setup.sh`) |
-| Architecture decisions (`adrtools`) | [`docs/tools/adrtools/SETUP.md`](./tools/adrtools/SETUP.md) |
 | Taste / anti-slop skill | [`docs/tools/taste-skill/SETUP.md`](./tools/taste-skill/SETUP.md) |
 | Brandbook authorship & review | [`docs/tools/brandbooker/SETUP.md`](./tools/brandbooker/SETUP.md) |
 | Ready-made `DESIGN.md` examples | [`docs/tools/awesome-design-md/SETUP.md`](./tools/awesome-design-md/SETUP.md) |
@@ -175,7 +174,7 @@ Licenses and links are summarized in the [root README](../README.md#curated-tool
 | [Root README](../README.md) | Everyone | Quick start, prerequisites, tool table |
 | **This guide** | Humans | How to use the toolkit day to day |
 | [`AGENTS.md`](../AGENTS.md) | AI agents | Mandatory runtime rules |
-| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Humans + agents | ADRs (`adrtools` from `docs/`) |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Humans + agents | ADRs (`adrtools` from `docs/`; usage in [`AGENTS.md`](../AGENTS.md)) |
 | [`docs/tools/*/SETUP.md`](./tools/) | Humans + agents | Per-tool setup |
 | [`BRANDS/README.md`](../BRANDS/README.md) | Humans | Brand/project template usage |
 

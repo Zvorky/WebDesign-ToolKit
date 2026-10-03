@@ -106,7 +106,6 @@ Guideline precedence remains: **Project > Brand > Vercel**.
 
 | Tool / Skill | Link | License & Usage |
 | :--- | :--- | :--- |
-| **adrtools** | [zvorky/adrtools](https://github.com/zvorky/adrtools) | Only ADR CLI for this repo. Run from `docs/`. Never substitute npryce/adr-tools. |
 | **Taste Skill** | [tasteskill.dev](https://www.tasteskill.dev/) | MIT License. Open source constraint guidelines to enforce design quality. |
 | **BrandBooker** | [zvorky/brandbooker](https://github.com/zvorky/brandbooker) | Brand system skill set. Use on request only; run `brandbook-review` whenever a brand is added or updated. |
 | **awesome-design-md** | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) | Open source reference for plain-text design constraints and brand systems. |

@@ -156,7 +156,7 @@
 
 
 ## **[ADR-5.0]** Tooling, Testing & Provisioning
-**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-03T00:59:31  
+**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-03T01:26:53  
 
 **Description:** Decisions about UI testing strategy, forbidden tooling, and environment setup automation.  
 
@@ -221,9 +221,9 @@
   **Pro:** One folder per tool  
 
 - ### **[ADR-5.7]** Architecture Decisions via zvorky/adrtools  
-  **Modified at:** 2026-10-03T00:59:31  
+  **Modified at:** 2026-10-03T01:26:53  
   **Problem:** A substitute ADR CLI (npryce/adr-tools) was cloned into vendor and used to create a parallel docs/adr/ file tree, splitting the source of truth from docs/.adr plus docs/ARCHITECTURE.md and ignoring the already-installed adrtools binary from github.com/zvorky/adrtools.  
-  **Decision:** The only ADR tool for this repository is github.com/zvorky/adrtools (the adrtools CLI). Records live in docs/.adr and are rendered to docs/ARCHITECTURE.md. Agents must run adrtools from the docs/ directory. Never clone or invoke npryce/adr-tools, never use adr new, never create a parallel docs/adr/ numbered-file layout, and never hand-edit ARCHITECTURE.md numbering. setup.sh prefers a system adrtools binary and otherwise vendors zvorky/adrtools only.  
+  **Decision:** The only ADR tool for this repository is github.com/zvorky/adrtools (the adrtools CLI). It is a host/system binary, not a toolkit-provisioned tool: do not add docs/tools/adrtools, do not vendor it via setup.sh, and do not list it among curated toolkit tools. Usage belongs in AGENTS.md. Records live in docs/.adr and are rendered to docs/ARCHITECTURE.md. Agents must run adrtools from the docs/ directory. Never clone or invoke npryce/adr-tools, never use adr new, never create a parallel docs/adr/ numbered-file layout, and never hand-edit ARCHITECTURE.md numbering.  
   **Pro:** Single source of truth in docs/.adr and docs/ARCHITECTURE.md  
   **Pro:** Uses the toolkit author CLI already installed on the machine  
   **Pro:** Stops agents from inventing a second ADR workflow  

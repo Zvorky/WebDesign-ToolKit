@@ -386,35 +386,10 @@ else
   record_tool "awesome-design-md" "failed" "\`git clone https://github.com/VoltAgent/awesome-design-md.git\`" "See docs/tools/awesome-design-md/SETUP.md"
 fi
 
-# ---------------------------------------------------------------------------
-# adrtools (zvorky/adrtools) — never npryce/adr-tools
-# ---------------------------------------------------------------------------
-
-log "Locating adrtools (github.com/zvorky/adrtools)"
-if [[ -d "$VENDOR_DIR/adr-tools" ]]; then
-  warn "Removing leftover npryce/adr-tools checkout at vendor/adr-tools"
-  rm -rf "$VENDOR_DIR/adr-tools"
-fi
-
-ADRTOOLS_BIN=""
-if have adrtools; then
-  ADRTOOLS_BIN="$(command -v adrtools)"
-elif clone_or_update "https://github.com/zvorky/adrtools.git" "$VENDOR_DIR/adrtools"; then
-  chmod +x "$VENDOR_DIR/adrtools/adrtools" 2>/dev/null || true
-  if [[ -x "$VENDOR_DIR/adrtools/adrtools" ]]; then
-    ADRTOOLS_BIN="$VENDOR_DIR/adrtools/adrtools"
-  fi
-  if ! python3 -c "import yaml" >/dev/null 2>&1; then
-    python3 -m pip install --user pyyaml >/dev/null 2>&1 \
-      || warn "PyYAML missing; adrtools needs it (\`python3 -m pip install pyyaml\`)"
-  fi
-fi
-
-if [[ -n "$ADRTOOLS_BIN" ]]; then
-  ok "adrtools: $ADRTOOLS_BIN"
-  record_tool "adrtools" "installed" "\`adrtools\` → $ADRTOOLS_BIN (run from \`docs/\`)" "Only ADR CLI: github.com/zvorky/adrtools. See docs/tools/adrtools/SETUP.md"
-else
-  record_tool "adrtools" "failed" "\`adrtools\` or \`git clone https://github.com/zvorky/adrtools.git vendor/adrtools\`" "See docs/tools/adrtools/SETUP.md"
+# Drop mistaken ADR CLI checkouts (adrtools is a host CLI, not a toolkit tool).
+if [[ -d "$VENDOR_DIR/adr-tools" ]] || [[ -d "$VENDOR_DIR/adrtools" ]]; then
+  warn "Removing leftover ADR CLI vendor checkouts (use system adrtools; see AGENTS.md)"
+  rm -rf "$VENDOR_DIR/adr-tools" "$VENDOR_DIR/adrtools"
 fi
 
 # ---------------------------------------------------------------------------
