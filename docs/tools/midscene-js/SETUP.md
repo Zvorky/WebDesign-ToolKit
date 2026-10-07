@@ -13,9 +13,18 @@ export MIDSCENE_MODEL_FAMILY="qwen3"
 
 Other models (Doubao, GLM, Gemini, GPT, …) are documented under Midscene model configuration.
 
-## Install (with Puppeteer)
+## Install (toolkit)
 
-Inside the target project:
+```bash
+./setup.sh --yes --with-visual-testing
+```
+
+Stack lives in `vendor/visual-testing/` (`@midscene/web` + Puppeteer + `tsx`).
+On Node 26, Midscene’s transitive `sharp` often builds from source — system
+`libvips` plus `node-gyp` / `node-addon-api` (installed by `setup.sh`) are required.
+Puppeteer smoke does not need model keys; `aiAssert` / vision agents do.
+
+## Install (per project, with Puppeteer)
 
 ```bash
 pnpm add -D @midscene/web puppeteer tsx dotenv

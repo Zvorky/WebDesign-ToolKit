@@ -466,6 +466,9 @@ fi
 if prompt_visual; then
   log "Installing optional Midscene.js + Puppeteer into vendor/visual-testing"
   ensure_dir "$VISUAL_DIR"
+  # pnpm 10+ blocks dependency build scripts unless allowBuilds is set.
+  # Placeholders like "set this to true or false" leave puppeteer postinstall skipped.
+  # sharp often has no Node 26 prebuild — node-gyp + system libvips can compile it.
   cat > "$VISUAL_DIR/package.json" <<'EOF'
 {
   "name": "webdesign-toolkit-visual-testing",
@@ -477,10 +480,23 @@ if prompt_visual; then
   "devDependencies": {
     "@midscene/web": "latest",
     "dotenv": "latest",
+    "node-addon-api": "latest",
+    "node-gyp": "latest",
     "puppeteer": "latest",
     "tsx": "latest"
   }
 }
+EOF
+
+  cat > "$VISUAL_DIR/pnpm-workspace.yaml" <<'EOF'
+allowBuilds:
+  esbuild: true
+  puppeteer: true
+  sharp: true
+EOF
+
+  cat > "$VISUAL_DIR/.npmrc" <<'EOF'
+verify-deps-before-run=false
 EOF
 
   cat > "$VISUAL_DIR/smoke.mjs" <<'EOF'
@@ -514,7 +530,7 @@ EOF
       warn "Puppeteer browser download failed; run manually: cd vendor/visual-testing && pnpm dlx puppeteer browsers install"
     fi
   else
-    warn "Visual testing pnpm install failed"
+    warn "Visual testing pnpm install failed (if sharp/node-gyp: install libvips/build tools, then re-run)"
   fi
 
   if [[ "$VISUAL_PKGS_OK" -eq 1 && "$VISUAL_BROWSER_OK" -eq 1 ]]; then

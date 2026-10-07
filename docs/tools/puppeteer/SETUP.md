@@ -2,7 +2,20 @@
 
 Headless Chrome/Firefox automation baseline for this toolkit. Use with Midscene.js for vision-based UI tests.
 
-## Install
+## Install (toolkit)
+
+Preferred: provision via the root script (writes `vendor/visual-testing/`):
+
+```bash
+./setup.sh --yes --with-visual-testing
+cd vendor/visual-testing && pnpm test:smoke
+```
+
+pnpm 10+ must allow Puppeteer’s postinstall (`allowBuilds.puppeteer: true` in
+`vendor/visual-testing/pnpm-workspace.yaml`). Without that, Chrome never downloads
+and install looks “failed”.
+
+## Install (ad-hoc project)
 
 ```bash
 pnpm add -D puppeteer
