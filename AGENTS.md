@@ -6,7 +6,7 @@ You are operating within the WebDesign-ToolKit, an AI-driven front-end architect
 * **Brand Isolation:** NEVER cross-contaminate brand contexts. Read design guidelines, brandbooks, and context exclusively from the requested `/BRANDS/{brand}/` directory.
 * **Project Scope:** Client-specific code, application logic, and component generation must reside strictly within `/BRANDS/{brand}/Projects/{project_name}/`.
 * **Brand/project folder templates:** When creating a new brand or project, copy from `/BRANDS/_TEMPLATE/` or `/BRANDS/_TEMPLATE/Projects/_TEMPLATE/` (see `/BRANDS/README.md`). Do not invent a different folder layout. Never use `_TEMPLATE` as a live brand context. Template Markdown files are descriptive placeholders — replace them with real content after copying.
-* **Page-template catalog (distinct):** `/_TEMPLATES/` is the niche **page** catalog. It is **not** `BRANDS/_TEMPLATE/`. See [Page Templates](#page-templates-catalog).
+* **Page-template catalog (distinct):** `/TEMPLATES/` is the niche **page** catalog. It is **not** `BRANDS/_TEMPLATE/`. See [Page Templates](#page-templates-catalog).
 * **Guideline Fallback Hierarchy:** Design rules must be applied in the following strict order of precedence: **Project Guidelines** > **Brand Guidelines** > **Vercel Guidelines** (default fallback). 
 * **Explicit Declarations:** If a Project or Brand possesses its own custom design rules, this must be explicitly stated within their respective `DESIGN.md` file.
 
@@ -15,14 +15,14 @@ You are operating within the WebDesign-ToolKit, an AI-driven front-end architect
 The toolkit git remote is **only** the toolkit: structure, skills docs, ADRs, templates, setup, and global `/history/`. Brands, projects, and niche page templates are **separate git worlds**. Never push them to the toolkit remote.
 
 * **NEVER** add, commit, or push anything under `/BRANDS/` to the toolkit remote, except the tracked scaffold (`BRANDS/README.md` and `BRANDS/_TEMPLATE/`).
-* **NEVER** add, commit, or push anything under `/_TEMPLATES/` to the toolkit remote, except the tracked scaffold (`_TEMPLATES/README.md`, `_TEMPLATES/_TEMPLATE_SPEC.md`, and `_TEMPLATES/_TEMPLATE/`).
+* **NEVER** add, commit, or push anything under `/TEMPLATES/` to the toolkit remote, except the tracked scaffold (`TEMPLATES/README.md`, `TEMPLATES/_TEMPLATE_SPEC.md`, and `TEMPLATES/_TEMPLATE/`).
 * **NEVER** add, commit, or push anything listed in the toolkit `.gitignore`.
 * **NEVER** use `git add -f` / `git add --force` (or equivalent) to sneak gitignored client or catalog files into a toolkit commit or PR.
 * **NEVER** open a toolkit PR that contains brand/project source, brandbooks, assets, history of a client, or niche template trees.
 * **NEVER** add nested brand/project/template repos as git submodules of the toolkit.
 * Each **brand** is its own git sub-repository at `/BRANDS/{brand}/` (`git init` after copying the template). It is not part of the toolkit repository.
 * Each **project** is its own git sub-repository at `/BRANDS/{brand}/Projects/{project}/`.
-* Each **niche page template** is its own git sub-repository at `/_TEMPLATES/{template_id}/` (`git init` after copying `_TEMPLATES/_TEMPLATE/`).
+* Each **niche page template** is its own git sub-repository at `/TEMPLATES/{template_id}/` (`git init` after copying `TEMPLATES/_TEMPLATE/`).
 * Do **not** `git push` a brand, project, or niche template to any remote, create a GitHub repo, or open a public PR for that work unless the user **explicitly authorizes publishing that brand, project, or template in that conversation**.
 * If cloud-agent, CI, or "commit / push / open a PR" instructions conflict with this isolation, **isolation wins**. A public toolkit PR may contain only toolkit files.
 
@@ -30,12 +30,12 @@ Decision records: [ADR-3.6](docs/ARCHITECTURE.md), [ADR-3.7](docs/ARCHITECTURE.m
 
 ## Page Templates Catalog
 
-Brand-agnostic niche pages live under `/_TEMPLATES/`. Load the bundled skill set at `/.agents/skills/page-templates/` when creating, binding, or maintaining them ([`docs/tools/page-templates/SETUP.md`](docs/tools/page-templates/SETUP.md)).
+Brand-agnostic niche pages live under `/TEMPLATES/`. Load the bundled skill set at `/.agents/skills/page-templates/` when creating, binding, or maintaining them ([`docs/tools/page-templates/SETUP.md`](docs/tools/page-templates/SETUP.md)).
 
 * **Default:** for a new page request, consult the catalog (`TEMPLATE.md` metadata) and bind the best niche match into `/BRANDS/{brand}/Projects/{project}/`.
 * **Opt-out:** if the user clearly asks for a page **from scratch**, do **not** use any catalog template.
 * **Token bind:** map the brand’s `DESIGN.md` / brandbook → CSS custom properties listed in `required_brand_tokens` (O(1) token sheet). Do not hard-code brand identity into catalog CSS ([ADR-3.8](docs/ARCHITECTURE.md)).
-* **Contract:** every niche needs a complete `TEMPLATE.md` + slots per [`_TEMPLATES/_TEMPLATE_SPEC.md`](_TEMPLATES/_TEMPLATE_SPEC.md) ([ADR-3.9](docs/ARCHITECTURE.md)).
+* **Contract:** every niche needs a complete `TEMPLATE.md` + slots per [`TEMPLATES/_TEMPLATE_SPEC.md`](TEMPLATES/_TEMPLATE_SPEC.md) ([ADR-3.9](docs/ARCHITECTURE.md)).
 * **Widgets in the catalog:** vanilla ES modules only; brand projects may still use React/etc. ([ADR-3.10](docs/ARCHITECTURE.md)).
 * **Bundled skill:** `page-templates` is versioned in-repo (allowlisted). It does not require `npx skills add`. Setup must never delete it ([ADR-2.6](docs/ARCHITECTURE.md)).
 
@@ -47,6 +47,7 @@ Brand-agnostic niche pages live under `/_TEMPLATES/`. Load the bundled skill set
 * Always run `adrtools` from `docs/` so those two files are found.
 * **NEVER** clone or invoke [npryce/adr-tools](https://github.com/npryce/adr-tools), **NEVER** run `adr new`, **NEVER** create `docs/adr/NNNN-*.md`, and **NEVER** hand-assign `ADR-X.Y` numbers in `ARCHITECTURE.md`.
 * `id` is a category (e.g. `3`) when adding a decision, or `X.Y` when updating. The CLI writes `docs/.adr` and regenerates `docs/ARCHITECTURE.md`.
+* **Update vs deprecate:** If a decision still holds and only needs revision (rename, refined wording, same intent under a better mechanism), use `adrtools decision update --id X.Y …`. Do **not** add a sibling decision and `--deprecates` the old one. Use **deprecate + new decision** only when the prior choice is fully revoked and replaced by a **different** architectural stance (not a rename or incremental refinement). Historical note: ADR-5.2→5.3 was a rename/`setup.sh` refinement that should have been an update; left as-is.
 
 ```bash
 cd docs
@@ -54,9 +55,11 @@ adrtools category list
 adrtools decision add --id 3 --title "…" --problem "…" --decision "…" --pros "…" --cons
 adrtools decision update --id 3.6 --decision "…"
 adrtools decision get --id 3.6
+# Deprecate only when replacing with a truly different decision:
+# adrtools decision add --id 5 --title "…" --decision "…" --deprecates 5.1
 ```
 
-Decision record: [ADR-5.7](docs/ARCHITECTURE.md).
+Decision record: [ADR-5.7](docs/ARCHITECTURE.md). See also [history/adrtools-update-vs-deprecate.md](history/adrtools-update-vs-deprecate.md).
 
 ## History Logging Architecture
 * **Three-Tier Logging:** Architectural and design decisions must be recorded at three distinct structural levels:
