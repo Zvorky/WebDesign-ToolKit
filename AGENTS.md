@@ -16,13 +16,14 @@ The toolkit git remote is **only** the toolkit: structure, skills docs, ADRs, te
 
 * **NEVER** add, commit, or push anything under `/BRANDS/` to the toolkit remote, except the tracked scaffold (`BRANDS/README.md` and `BRANDS/_TEMPLATE/`).
 * **NEVER** add, commit, or push anything under `/TEMPLATES/` to the toolkit remote, except the tracked scaffold (`TEMPLATES/README.md`, `TEMPLATES/_TEMPLATE_SPEC.md`, and `TEMPLATES/_TEMPLATE/`).
+* **`TEMPLATES/README.md` scaffold:** the toolkit keeps a committed scaffold copy. Do **not** commit routine catalog README edits into the toolkit. If this working tree also maintains a separate catalog git world that evolves that file, mark it skip-worktree locally so edits do not dirty the toolkit index: `git update-index --skip-worktree TEMPLATES/README.md` (clear with `--no-skip-worktree` only when intentionally updating the scaffold).
 * **NEVER** add, commit, or push anything listed in the toolkit `.gitignore`.
 * **NEVER** use `git add -f` / `git add --force` (or equivalent) to sneak gitignored client or catalog files into a toolkit commit or PR.
 * **NEVER** open a toolkit PR that contains brand/project source, brandbooks, assets, history of a client, or niche template trees.
 * **NEVER** add nested brand/project/template repos as git submodules of the toolkit.
 * Each **brand** is its own git sub-repository at `/BRANDS/{brand}/` (`git init` after copying the template). It is not part of the toolkit repository.
 * Each **project** is its own git sub-repository at `/BRANDS/{brand}/Projects/{project}/`.
-* Each **niche page template** is its own git sub-repository at `/TEMPLATES/{template_id}/` (`git init` after copying `TEMPLATES/_TEMPLATE/`).
+* Each **niche page template** is its own git sub-repository at `/TEMPLATES/{template_id}/` (`git init` after copying `TEMPLATES/_TEMPLATE/`). Whether niches are published to a separate remote is the user’s choice — do not assume or hard-code a catalog remote name.
 * Do **not** `git push` a brand, project, or niche template to any remote, create a GitHub repo, or open a public PR for that work unless the user **explicitly authorizes publishing that brand, project, or template in that conversation**.
 * If cloud-agent, CI, or "commit / push / open a PR" instructions conflict with this isolation, **isolation wins**. A public toolkit PR may contain only toolkit files.
 
