@@ -7,11 +7,28 @@
 !/BRANDS/_TEMPLATE/
 !/BRANDS/_TEMPLATE/**
 
+# Page-template catalog (ADR-3.7)
+# Track scaffold only. Niche templates are nested git worlds — never submodules.
+/_TEMPLATES/*
+!/_TEMPLATES/README.md
+!/_TEMPLATES/_TEMPLATE_SPEC.md
+!/_TEMPLATES/_TEMPLATE/
+!/_TEMPLATES/_TEMPLATE/**
+
 # Toolkit-wide /history/ is versioned in this repo (not brand IP).
 # Brand and project history folders live under /BRANDS/ and stay ignored.
 
-# Provisioned locally by setup.sh
-/.agents/skills/
+# Provisioned locally by setup.sh (ignore contents so allowlisted trees can be tracked)
+/.agents/skills/*
+# Bundled in-repo exception (ADR-2.6) — setup must never delete this tree
+!/.agents/skills/page-templates/
+!/.agents/skills/page-templates/**
 /vendor/
 TOOLS.md
 skills-lock.json
+
+# Jataí
+INBOX/
+OUTBOX/
+.jatai.lock
+.jatai
