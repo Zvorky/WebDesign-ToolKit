@@ -9,6 +9,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
 AGENTS_SKILLS_DIR="$ROOT_DIR/.agents/skills"
+# Bundled in-repo skill (ADR-2.6) — never delete; not installed via skills CLI
+PAGE_TEMPLATES_SKILL_DIR="$AGENTS_SKILLS_DIR/page-templates"
 VENDOR_DIR="$ROOT_DIR/vendor"
 NPM_PREFIX="$VENDOR_DIR/npm-global"
 VISUAL_DIR="$VENDOR_DIR/visual-testing"
@@ -373,6 +375,16 @@ if [[ -f "$ROOT_DIR/skills-lock.json" ]]; then
   record_tool "skills CLI" "installed" "\`npx skills ls\`; restore: \`npx skills experimental_install\`" "Lockfile: \`skills-lock.json\` (git-ignored)"
 else
   record_tool "skills CLI" "partial" "\`npx skills ls\`" "skills-lock.json not found after skill install"
+fi
+
+# Bundled page-templates skill set (ADR-2.6) — versioned in repo; never remove
+log "Recording bundled page-templates skill set"
+if [[ -d "$PAGE_TEMPLATES_SKILL_DIR" && -f "$PAGE_TEMPLATES_SKILL_DIR/SKILL.md" ]]; then
+  record_tool "Page Templates" "bundled" "\`.agents/skills/page-templates/\` (create/use/maintain); no \`npx skills add\`" "Allowlisted in .gitignore — see docs/tools/page-templates/SETUP.md"
+  ok "page-templates skill present (bundled; will not be deleted by setup)"
+else
+  record_tool "Page Templates" "missing" "\`.agents/skills/page-templates/\`" "Expected bundled skill tree — restore from git; setup must never delete it"
+  warn "page-templates skill missing at $PAGE_TEMPLATES_SKILL_DIR (bundled; restore from toolkit clone)"
 fi
 
 # ---------------------------------------------------------------------------
