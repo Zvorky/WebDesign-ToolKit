@@ -43,7 +43,7 @@ categories:
   description: Decisions about visual guidelines, aesthetic enforcement, and how UI
     building blocks are sourced for LLM-friendly generation.
   created_at: '2026-10-01T13:15:11'
-  modified_at: '2026-10-01T17:26:08'
+  modified_at: '2026-10-12T10:27:48'
   decisions:
   - id: 1
     title: Semantic Design Guidelines (DESIGN.md)
@@ -132,13 +132,31 @@ categories:
     modified_at: '2026-10-01T17:26:08'
     sub_decisions: []
     deprecated: false
+  - id: 6
+    title: Toolkit-Native Page-Templates Skill Set (In-Repo)
+    problem: ADR-2.4 installs skills only via the skills CLI (git-ignored). Catalog
+      create/use/maintain rules must ship with the toolkit clone.
+    decision: Version a page-templates skill set under /.agents/skills/page-templates/
+      as a controlled exception to ADR-2.4. Allowlist it in .gitignore. It does not
+      require setup.sh / npx skills add. Setup must not delete it. Load it when creating,
+      binding, or maintaining page templates.
+    pros:
+    - Ships with toolkit clone
+    - No network install for catalog rules
+    - Allowlisted beside git-ignored CLI skills
+    cons:
+    - Exception to ADR-2.4 install model
+    - Must keep .gitignore allowlist correct
+    modified_at: '2026-10-12T10:27:48'
+    sub_decisions: []
+    deprecated: false
   deprecated: false
 - id: 3
   title: Repository Structure & Brand Isolation
   description: Decisions about directory layout, brand IP protection, project segregation,
     and history tracking.
   created_at: '2026-10-01T13:15:12'
-  modified_at: '2026-10-03T00:59:31'
+  modified_at: '2026-10-12T10:27:48'
   decisions:
   - id: 1
     title: Strict Brand Context Isolation (/BRANDS/)
@@ -257,6 +275,85 @@ categories:
     modified_at: '2026-10-03T00:59:31'
     sub_decisions: []
     deprecated: false
+  - id: 7
+    title: Nested Git Isolation for the Page-Template Catalog
+    problem: A growing niche page-template library must version independently from
+      toolkit docs/setup without leaking into the toolkit remote or using submodules.
+    decision: Place the catalog at /_TEMPLATES/. Track only README.md, _TEMPLATE_SPEC.md,
+      and _TEMPLATE/** on the toolkit remote. Each real template lives at /_TEMPLATES/{template_id}/
+      as its own nested git repository (same isolation rules as brands/projects).
+      Never add the catalog as a git submodule. Never force-add gitignored template
+      trees into toolkit commits/PRs. Do not push a template remote unless the user
+      explicitly authorizes that template in the conversation. Templates do not depend
+      on any brand; brand context is applied only at bind time into a project tree.
+    pros:
+    - Independent template versioning
+    - Mirrors brand/project isolation
+    - No submodule coupling to toolkit remote
+    cons:
+    - Agents must remember nested git init
+    - Catalog growth lives outside toolkit history
+    modified_at: '2026-10-12T10:27:47'
+    sub_decisions: []
+    deprecated: false
+  - id: 8
+    title: Strict Decoupling of Semantic Layout and Design Tokens
+    problem: Hard-coded colors, fonts, or radii in template CSS force per-brand refactors
+      and couple layout to identity.
+    decision: Template HTML/CSS structure stays brand-agnostic. All visual parameters
+      use CSS custom properties only (e.g. var(--color-primary), var(--font-heading)).
+      Binding a brand is an O(1) injection of a token sheet (typically tokens.css
+      derived from that brand’s DESIGN.md / brandbook) without editing template structure
+      or class logic.
+    pros:
+    - O(1) brand binding
+    - Reusable layout across brands
+    - No per-brand CSS rewrites
+    cons:
+    - Requires complete token coverage
+    - Incomplete brand tokens surface as missing vars
+    modified_at: '2026-10-12T10:27:47'
+    sub_decisions: []
+    deprecated: false
+  - id: 9
+    title: Declarative Metadata and Slots via TEMPLATE.md
+    problem: Without a formal manifest, agents cannot select niches, fill content,
+      or validate catalog completeness.
+    decision: Every niche template must ship a TEMPLATE.md with standardized YAML
+      frontmatter covering niche target, tone profile, conversion hooks, required
+      brand tokens, and the mandatory {{SLOT_NAME}} inventory. No template enters
+      the catalog without this complete semantic spec (enforced by _TEMPLATE_SPEC.md
+      + the page-templates skill).
+    pros:
+    - Machine-readable niche selection
+    - Slot inventory is auditable
+    - SPEC + skill can reject incomplete templates
+    cons:
+    - Upfront metadata authoring cost
+    - Schema drift needs maintain skill
+    modified_at: '2026-10-12T10:27:47'
+    sub_decisions: []
+    deprecated: false
+  - id: 10
+    title: Zero-Dependency Vanilla JS for Template Widgets
+    problem: Heavy UI frameworks in catalog widgets bloat LCP and couple the catalog
+      to a single app stack.
+    decision: High-conversion widgets shipped inside /_TEMPLATES/ (calculators, before/after
+      comparators, package pickers, etc.) use modern native JavaScript (ES modules)
+      only—no React, Vue, jQuery, or similar dependencies in those widget scripts.
+      Each widget script stays under 10KB gzipped and must not block the critical
+      rendering path. This constraint is catalog-scoped; brand projects may still
+      use the toolkit’s normal component stacks.
+    pros:
+    - Small LCP-friendly widgets
+    - Host-stack agnostic catalog
+    - Brand projects keep React/Vue freedom
+    cons:
+    - Limited widget complexity in catalog
+    - Two JS conventions (catalog vs projects)
+    modified_at: '2026-10-12T10:27:48'
+    sub_decisions: []
+    deprecated: false
   deprecated: false
 - id: 4
   title: Agent Orchestration & Documentation
@@ -321,7 +418,7 @@ categories:
   description: Decisions about UI testing strategy, forbidden tooling, and environment
     setup automation.
   created_at: '2026-10-01T13:15:12'
-  modified_at: '2026-10-03T01:26:53'
+  modified_at: '2026-10-12T10:27:48'
   decisions:
   - id: 1
     title: Vision-Based Autonomous Testing (Microsoft Isolation)
@@ -464,6 +561,44 @@ categories:
     - Stops agents from inventing a second ADR workflow
     cons: []
     modified_at: '2026-10-03T01:26:53'
+    sub_decisions: []
+    deprecated: false
+  - id: 8
+    title: Pre-Publish Visual Quality Gates
+    problem: Bound pages can regress Core Web Vitals, contrast, or small-viewport
+      layout before publish.
+    decision: 'Compiled/bound pages should pass a pre-publish audit: LCP < 1.2s, CLS
+      = 0, text contrast WCAG ≥ 4.5:1, and layout integrity at 360px–430px widths.
+      Prefer Puppeteer (+ optional Midscene when provisioned). Failing pages are not
+      released. Automation may land after Phase 1; the gate is architectural policy
+      now.'
+    pros:
+    - Shared quality bar before release
+    - Aligns with optional Midscene/Puppeteer
+    - Policy can precede automation
+    cons:
+    - Automation deferred past Phase 1
+    - Strict LCP target may need tooling
+    modified_at: '2026-10-12T10:27:48'
+    sub_decisions: []
+    deprecated: false
+  - id: 9
+    title: Multi-Target Static Publish Artifact
+    problem: Bound demos must deploy to heterogeneous static hosts without framework
+      adapters.
+    decision: The bound output is a self-contained static package (plain HTML/CSS/JS).
+      It must be directly publishable to static file hosting (e.g. Apache/Nginx docroots,
+      GitHub Pages, Cloudflare Pages, Vercel static). No runtime adapter required.
+      Exact output directory naming is an implementation detail of later bind tooling
+      (commonly dist/ under the project).
+    pros:
+    - Host-agnostic static deploy
+    - No framework adapter tax
+    - Fits catalog vanilla output
+    cons:
+    - No SSR/dynamic host features
+    - Bind tooling deferred to later phases
+    modified_at: '2026-10-12T10:27:48'
     sub_decisions: []
     deprecated: false
   deprecated: false

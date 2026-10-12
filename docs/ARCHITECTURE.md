@@ -23,7 +23,7 @@
 
 
 ## **[ADR-2.0]** Design System & Component Sourcing
-**Created at:** 2026-10-01T13:15:11 | **Modified at:** 2026-10-01T17:26:08  
+**Created at:** 2026-10-01T13:15:11 | **Modified at:** 2026-10-12T10:27:48  
 
 **Description:** Decisions about visual guidelines, aesthetic enforcement, and how UI building blocks are sourced for LLM-friendly generation.  
 
@@ -70,9 +70,19 @@
   **Pro:** Enforces quality gates on brand add/update  
   **Pro:** Centralizes brand OS rules in a dedicated skill set  
 
+- ### **[ADR-2.6]** Toolkit-Native Page-Templates Skill Set (In-Repo)  
+  **Modified at:** 2026-10-12T10:27:48  
+  **Problem:** ADR-2.4 installs skills only via the skills CLI (git-ignored). Catalog create/use/maintain rules must ship with the toolkit clone.  
+  **Decision:** Version a page-templates skill set under /.agents/skills/page-templates/ as a controlled exception to ADR-2.4. Allowlist it in .gitignore. It does not require setup.sh / npx skills add. Setup must not delete it. Load it when creating, binding, or maintaining page templates.  
+  **Pro:** Ships with toolkit clone  
+  **Pro:** No network install for catalog rules  
+  **Pro:** Allowlisted beside git-ignored CLI skills  
+  **Con:** Exception to ADR-2.4 install model  
+  **Con:** Must keep .gitignore allowlist correct  
+
 
 ## **[ADR-3.0]** Repository Structure & Brand Isolation
-**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-03T00:59:31  
+**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-12T10:27:48  
 
 **Description:** Decisions about directory layout, brand IP protection, project segregation, and history tracking.  
 
@@ -124,6 +134,46 @@
   **Pro:** Agents git init brand and project folders instead of adding them to the toolkit index  
   **Pro:** Publishing a client remote is explicit per-conversation permission, not an implied PR step  
 
+- ### **[ADR-3.7]** Nested Git Isolation for the Page-Template Catalog  
+  **Modified at:** 2026-10-12T10:27:47  
+  **Problem:** A growing niche page-template library must version independently from toolkit docs/setup without leaking into the toolkit remote or using submodules.  
+  **Decision:** Place the catalog at /_TEMPLATES/. Track only README.md, _TEMPLATE_SPEC.md, and _TEMPLATE/** on the toolkit remote. Each real template lives at /_TEMPLATES/{template_id}/ as its own nested git repository (same isolation rules as brands/projects). Never add the catalog as a git submodule. Never force-add gitignored template trees into toolkit commits/PRs. Do not push a template remote unless the user explicitly authorizes that template in the conversation. Templates do not depend on any brand; brand context is applied only at bind time into a project tree.  
+  **Pro:** Independent template versioning  
+  **Pro:** Mirrors brand/project isolation  
+  **Pro:** No submodule coupling to toolkit remote  
+  **Con:** Agents must remember nested git init  
+  **Con:** Catalog growth lives outside toolkit history  
+
+- ### **[ADR-3.8]** Strict Decoupling of Semantic Layout and Design Tokens  
+  **Modified at:** 2026-10-12T10:27:47  
+  **Problem:** Hard-coded colors, fonts, or radii in template CSS force per-brand refactors and couple layout to identity.  
+  **Decision:** Template HTML/CSS structure stays brand-agnostic. All visual parameters use CSS custom properties only (e.g. var(--color-primary), var(--font-heading)). Binding a brand is an O(1) injection of a token sheet (typically tokens.css derived from that brand’s DESIGN.md / brandbook) without editing template structure or class logic.  
+  **Pro:** O(1) brand binding  
+  **Pro:** Reusable layout across brands  
+  **Pro:** No per-brand CSS rewrites  
+  **Con:** Requires complete token coverage  
+  **Con:** Incomplete brand tokens surface as missing vars  
+
+- ### **[ADR-3.9]** Declarative Metadata and Slots via TEMPLATE.md  
+  **Modified at:** 2026-10-12T10:27:47  
+  **Problem:** Without a formal manifest, agents cannot select niches, fill content, or validate catalog completeness.  
+  **Decision:** Every niche template must ship a TEMPLATE.md with standardized YAML frontmatter covering niche target, tone profile, conversion hooks, required brand tokens, and the mandatory {{SLOT_NAME}} inventory. No template enters the catalog without this complete semantic spec (enforced by _TEMPLATE_SPEC.md + the page-templates skill).  
+  **Pro:** Machine-readable niche selection  
+  **Pro:** Slot inventory is auditable  
+  **Pro:** SPEC + skill can reject incomplete templates  
+  **Con:** Upfront metadata authoring cost  
+  **Con:** Schema drift needs maintain skill  
+
+- ### **[ADR-3.10]** Zero-Dependency Vanilla JS for Template Widgets  
+  **Modified at:** 2026-10-12T10:27:48  
+  **Problem:** Heavy UI frameworks in catalog widgets bloat LCP and couple the catalog to a single app stack.  
+  **Decision:** High-conversion widgets shipped inside /_TEMPLATES/ (calculators, before/after comparators, package pickers, etc.) use modern native JavaScript (ES modules) only—no React, Vue, jQuery, or similar dependencies in those widget scripts. Each widget script stays under 10KB gzipped and must not block the critical rendering path. This constraint is catalog-scoped; brand projects may still use the toolkit’s normal component stacks.  
+  **Pro:** Small LCP-friendly widgets  
+  **Pro:** Host-stack agnostic catalog  
+  **Pro:** Brand projects keep React/Vue freedom  
+  **Con:** Limited widget complexity in catalog  
+  **Con:** Two JS conventions (catalog vs projects)  
+
 
 ## **[ADR-4.0]** Agent Orchestration & Documentation
 **Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-03T00:59:23  
@@ -156,7 +206,7 @@
 
 
 ## **[ADR-5.0]** Tooling, Testing & Provisioning
-**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-03T01:26:53  
+**Created at:** 2026-10-01T13:15:12 | **Modified at:** 2026-10-12T10:27:48  
 
 **Description:** Decisions about UI testing strategy, forbidden tooling, and environment setup automation.  
 
@@ -227,5 +277,25 @@
   **Pro:** Single source of truth in docs/.adr and docs/ARCHITECTURE.md  
   **Pro:** Uses the toolkit author CLI already installed on the machine  
   **Pro:** Stops agents from inventing a second ADR workflow  
+
+- ### **[ADR-5.8]** Pre-Publish Visual Quality Gates  
+  **Modified at:** 2026-10-12T10:27:48  
+  **Problem:** Bound pages can regress Core Web Vitals, contrast, or small-viewport layout before publish.  
+  **Decision:** Compiled/bound pages should pass a pre-publish audit: LCP < 1.2s, CLS = 0, text contrast WCAG ≥ 4.5:1, and layout integrity at 360px–430px widths. Prefer Puppeteer (+ optional Midscene when provisioned). Failing pages are not released. Automation may land after Phase 1; the gate is architectural policy now.  
+  **Pro:** Shared quality bar before release  
+  **Pro:** Aligns with optional Midscene/Puppeteer  
+  **Pro:** Policy can precede automation  
+  **Con:** Automation deferred past Phase 1  
+  **Con:** Strict LCP target may need tooling  
+
+- ### **[ADR-5.9]** Multi-Target Static Publish Artifact  
+  **Modified at:** 2026-10-12T10:27:48  
+  **Problem:** Bound demos must deploy to heterogeneous static hosts without framework adapters.  
+  **Decision:** The bound output is a self-contained static package (plain HTML/CSS/JS). It must be directly publishable to static file hosting (e.g. Apache/Nginx docroots, GitHub Pages, Cloudflare Pages, Vercel static). No runtime adapter required. Exact output directory naming is an implementation detail of later bind tooling (commonly dist/ under the project).  
+  **Pro:** Host-agnostic static deploy  
+  **Pro:** No framework adapter tax  
+  **Pro:** Fits catalog vanilla output  
+  **Con:** No SSR/dynamic host features  
+  **Con:** Bind tooling deferred to later phases  
 
 
