@@ -1,7 +1,7 @@
 ---
 name: page-templates-maintain
 description: >-
-  Keep /_TEMPLATES/ niches compliant with _TEMPLATE_SPEC.md and ADRs:
+  Keep /TEMPLATES/ niches compliant with _TEMPLATE_SPEC.md and ADRs:
   TEMPLATE.md completeness, token-only CSS, slot inventory, vanilla widgets,
   nested git isolation.
 ---
@@ -25,7 +25,7 @@ description: >-
 
 ## Remediation
 
-Fix the niche in place under `/_TEMPLATES/{template_id}/`. Record material contract changes in toolkit `/history/` when they are toolkit-wide; niche-local notes stay in that template’s nested repo.
+Fix the niche in place under `/TEMPLATES/{template_id}/`. Record material contract changes in toolkit `/history/` when they are toolkit-wide; niche-local notes stay in that template’s nested repo.
 
 ## Do not
 

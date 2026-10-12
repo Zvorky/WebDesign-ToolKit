@@ -7,15 +7,15 @@ Brand-agnostic niche page templates. Distinct from `BRANDS/_TEMPLATE/` (brand/pr
 | Path | Toolkit remote |
 | :--- | :--- |
 | `README.md`, `_TEMPLATE_SPEC.md`, `_TEMPLATE/**` | Tracked |
-| `/_TEMPLATES/{template_id}/` (real niches) | Nested git world — gitignored; never a submodule |
+| `/TEMPLATES/{template_id}/` (real niches) | Nested git world — gitignored; never a submodule |
 
 ## Create a niche template
 
 ```bash
 TEMPLATE_ID=landing-saas
-mkdir -p "_TEMPLATES/${TEMPLATE_ID}"
-cp -a _TEMPLATES/_TEMPLATE/. "_TEMPLATES/${TEMPLATE_ID}/"
-git -C "_TEMPLATES/${TEMPLATE_ID}" init
+mkdir -p "TEMPLATES/${TEMPLATE_ID}"
+cp -a TEMPLATES/_TEMPLATE/. "TEMPLATES/${TEMPLATE_ID}/"
+git -C "TEMPLATES/${TEMPLATE_ID}" init
 # Edit TEMPLATE.md, index.html, styles.css — see _TEMPLATE_SPEC.md
 ```
 

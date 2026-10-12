@@ -1,6 +1,6 @@
 # Page Template Spec
 
-Contract for every niche under `/_TEMPLATES/{template_id}/`. The tracked scaffold at `_TEMPLATE/` demonstrates a valid minimal instance.
+Contract for every niche under `/TEMPLATES/{template_id}/`. The tracked scaffold at `_TEMPLATE/` demonstrates a valid minimal instance.
 
 ## Required files
 
@@ -45,7 +45,7 @@ Rules:
 
 ## Widgets (ADR-3.10)
 
-- Interactive widgets **inside `/_TEMPLATES/`** use vanilla ES modules only — no React, Vue, jQuery, or npm UI kits in those scripts.
+- Interactive widgets **inside `/TEMPLATES/`** use vanilla ES modules only — no React, Vue, jQuery, or npm UI kits in those scripts.
 - Keep each widget script under 10KB gzipped; load with `defer` or `type="module"` so they do not block the critical path.
 - This rule is **catalog-scoped**. Brand projects may use the toolkit’s normal stacks.
 

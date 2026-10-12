@@ -10,7 +10,7 @@ description: >-
 ## When
 
 - User wants a new page and did **not** opt out to from-scratch.
-- Binding a chosen `/_TEMPLATES/{template_id}/` into a brand project.
+- Binding a chosen `/TEMPLATES/{template_id}/` into a brand project.
 
 ## Steps
 

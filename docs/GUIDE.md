@@ -14,10 +14,10 @@ WebDesign-ToolKit is a **documentation-and-infrastructure** repo for building fr
 1. **Rules** so agents do not invent generic “AI slop” and do not mix brand contexts.
 2. **Setup** (`setup.sh`) so tools and skills install the same way on every machine.
 3. **Brand isolation** (`BRANDS/`) so client IP stays in nested git repos, out of the toolkit remote.
-4. **Page-template catalog** (`/_TEMPLATES/`) for brand-agnostic niche pages (bound into projects).
+4. **Page-template catalog** (`/TEMPLATES/`) for brand-agnostic niche pages (bound into projects).
 5. **Curated tools** (component registries, design references, optional visual testing).
 
-You write brand guidelines and project code under `BRANDS/`. Agents read those files and generate UI inside one project at a time. Those folders are **ignored by this git repo**; they get their own `git init` (see [Git isolation](#git-isolation)). Niche page templates under `/_TEMPLATES/{id}/` follow the same nested-git pattern.
+You write brand guidelines and project code under `BRANDS/`. Agents read those files and generate UI inside one project at a time. Those folders are **ignored by this git repo**; they get their own `git init` (see [Git isolation](#git-isolation)). Niche page templates under `/TEMPLATES/{id}/` follow the same nested-git pattern.
 
 ---
 
@@ -28,11 +28,11 @@ Toolkit (this git remote)     Brand git world (nested)            Project git wo
 ─────────────────────────     ────────────────────────            ──────────────────────────
 docs/, setup.sh, AGENTS.md    BRANDS/acme/  (git init)            Projects/site/  (git init)
 ARCHITECTURE.md, /history/    DESIGN.md, brandbook.md             source + optional DESIGN.md
-_TEMPLATES/ scaffold          history/  (brand repo only)         history/ (project repo only)
+TEMPLATES/ scaffold          history/  (brand repo only)         history/ (project repo only)
 .agents/skills/page-templates/
 vendor/ (local installs)
 
-Also nested (gitignored):     _TEMPLATES/{template_id}/  (git init) — niche pages, brand-agnostic
+Also nested (gitignored):     TEMPLATES/{template_id}/  (git init) — niche pages, brand-agnostic
 ```
 
 **Two different `_TEMPLATE` ideas:**
@@ -40,7 +40,7 @@ Also nested (gitignored):     _TEMPLATES/{template_id}/  (git init) — niche pa
 | Path | What it is |
 | :--- | :--- |
 | `BRANDS/_TEMPLATE/` | Brand / project **folder** scaffold |
-| `/_TEMPLATES/` | Niche **page** catalog (copy `_TEMPLATE/` → `{template_id}/`) |
+| `/TEMPLATES/` | Niche **page** catalog (copy `_TEMPLATE/` → `{template_id}/`) |
 
 **Guideline order** (highest wins):
 
@@ -71,7 +71,7 @@ If `setup.sh` fails for one tool, the rest can still succeed — check `TOOLS.md
 
 ## Git isolation
 
-The toolkit remote never receives client trees or niche template trees. After you copy a brand, project, or page-template scaffold, initialize a nested repo there (`git init`). Do not `git add -f` ignored `/BRANDS/` or `/_TEMPLATES/{id}/` paths into this repository. Do not open a toolkit PR with brandbooks, assets, project source, or niche templates.
+The toolkit remote never receives client trees or niche template trees. After you copy a brand, project, or page-template scaffold, initialize a nested repo there (`git init`). Do not `git add -f` ignored `/BRANDS/` or `/TEMPLATES/{id}/` paths into this repository. Do not open a toolkit PR with brandbooks, assets, project source, or niche templates.
 
 Publishing a brand, project, or niche template to GitHub (or any remote) is opt-in: only when you explicitly authorize it for that artifact.
 
@@ -79,10 +79,10 @@ Enforcement for agents: [`AGENTS.md`](../AGENTS.md). Decisions: [ADR-3.6](./ARCH
 
 ## Page templates catalog
 
-Use `/_TEMPLATES/` when you want a reusable niche layout (landing, offer page, etc.) that stays brand-agnostic until bind time.
+Use `/TEMPLATES/` when you want a reusable niche layout (landing, offer page, etc.) that stays brand-agnostic until bind time.
 
-1. Copy `_TEMPLATES/_TEMPLATE/` → `_TEMPLATES/{template_id}/` and `git init`.
-2. Fill `TEMPLATE.md` (niche, tone, slots, required CSS tokens) per [`_TEMPLATES/_TEMPLATE_SPEC.md`](../_TEMPLATES/_TEMPLATE_SPEC.md).
+1. Copy `TEMPLATES/_TEMPLATE/` → `TEMPLATES/{template_id}/` and `git init`.
+2. Fill `TEMPLATE.md` (niche, tone, slots, required CSS tokens) per [`TEMPLATES/_TEMPLATE_SPEC.md`](../TEMPLATES/_TEMPLATE_SPEC.md).
 3. When generating a page for a brand, agents load `.agents/skills/page-templates/`, pick a niche, inject tokens from that brand’s `DESIGN.md` / brandbook, fill slots, and write under `BRANDS/{brand}/Projects/{project}/`.
 4. **Opt-out:** ask for a page **from scratch** if you do not want the catalog.
 
@@ -165,7 +165,7 @@ At each tier:
 
 Useful agent skills after setup:
 
-- **page-templates** (bundled) — create / bind / maintain `/_TEMPLATES/` niches  
+- **page-templates** (bundled) — create / bind / maintain `/TEMPLATES/` niches  
 - **design-taste-frontend** (Taste Skill) — anti-slop layout/aesthetic rules  
 - **web-design-guidelines** — Vercel interface guidelines as fallback  
 - **BrandBooker** — brandbook authorship on request; **`brandbook-review`** whenever a brand is added or updated  

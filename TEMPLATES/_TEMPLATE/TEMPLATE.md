@@ -23,4 +23,4 @@ slots:
 
 # Template scaffold
 
-Copy this folder to `/_TEMPLATES/{template_id}/`, run `git init`, replace this file’s frontmatter, and fill slots in `index.html`. See [`../_TEMPLATE_SPEC.md`](../_TEMPLATE_SPEC.md).
+Copy this folder to `/TEMPLATES/{template_id}/`, run `git init`, replace this file’s frontmatter, and fill slots in `index.html`. See [`../_TEMPLATE_SPEC.md`](../_TEMPLATE_SPEC.md).

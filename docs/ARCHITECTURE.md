@@ -137,7 +137,7 @@
 - ### **[ADR-3.7]** Nested Git Isolation for the Page-Template Catalog  
   **Modified at:** 2026-10-12T10:27:47  
   **Problem:** A growing niche page-template library must version independently from toolkit docs/setup without leaking into the toolkit remote or using submodules.  
-  **Decision:** Place the catalog at /_TEMPLATES/. Track only README.md, _TEMPLATE_SPEC.md, and _TEMPLATE/** on the toolkit remote. Each real template lives at /_TEMPLATES/{template_id}/ as its own nested git repository (same isolation rules as brands/projects). Never add the catalog as a git submodule. Never force-add gitignored template trees into toolkit commits/PRs. Do not push a template remote unless the user explicitly authorizes that template in the conversation. Templates do not depend on any brand; brand context is applied only at bind time into a project tree.  
+  **Decision:** Place the catalog at /TEMPLATES/. Track only README.md, _TEMPLATE_SPEC.md, and _TEMPLATE/** on the toolkit remote. Each real template lives at /TEMPLATES/{template_id}/ as its own nested git repository (same isolation rules as brands/projects). Never add the catalog as a git submodule. Never force-add gitignored template trees into toolkit commits/PRs. Do not push a template remote unless the user explicitly authorizes that template in the conversation. Templates do not depend on any brand; brand context is applied only at bind time into a project tree.  
   **Pro:** Independent template versioning  
   **Pro:** Mirrors brand/project isolation  
   **Pro:** No submodule coupling to toolkit remote  
@@ -167,7 +167,7 @@
 - ### **[ADR-3.10]** Zero-Dependency Vanilla JS for Template Widgets  
   **Modified at:** 2026-10-12T10:27:48  
   **Problem:** Heavy UI frameworks in catalog widgets bloat LCP and couple the catalog to a single app stack.  
-  **Decision:** High-conversion widgets shipped inside /_TEMPLATES/ (calculators, before/after comparators, package pickers, etc.) use modern native JavaScript (ES modules) only—no React, Vue, jQuery, or similar dependencies in those widget scripts. Each widget script stays under 10KB gzipped and must not block the critical rendering path. This constraint is catalog-scoped; brand projects may still use the toolkit’s normal component stacks.  
+  **Decision:** High-conversion widgets shipped inside /TEMPLATES/ (calculators, before/after comparators, package pickers, etc.) use modern native JavaScript (ES modules) only—no React, Vue, jQuery, or similar dependencies in those widget scripts. Each widget script stays under 10KB gzipped and must not block the critical rendering path. This constraint is catalog-scoped; brand projects may still use the toolkit’s normal component stacks.  
   **Pro:** Small LCP-friendly widgets  
   **Pro:** Host-stack agnostic catalog  
   **Pro:** Brand projects keep React/Vue freedom  

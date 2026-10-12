@@ -1,6 +1,6 @@
 # Page Templates — Setup
 
-Bundled toolkit skill set for the `/_TEMPLATES/` niche page catalog ([ADR-2.6](../../ARCHITECTURE.md)). **No install step.**
+Bundled toolkit skill set for the `/TEMPLATES/` niche page catalog ([ADR-2.6](../../ARCHITECTURE.md)). **No install step.**
 
 ## Install
 
@@ -32,9 +32,9 @@ Do **not** run `npx skills add` for this skill.
 | Path | Meaning |
 | :--- | :--- |
 | `BRANDS/_TEMPLATE/` | Brand / project **folder** scaffold |
-| `/_TEMPLATES/` | Niche **page** catalog (`README.md`, `_TEMPLATE_SPEC.md`, `_TEMPLATE/`) |
+| `/TEMPLATES/` | Niche **page** catalog (`README.md`, `_TEMPLATE_SPEC.md`, `_TEMPLATE/`) |
 
-Real niches: `/_TEMPLATES/{template_id}/` — nested git repos, brand-agnostic ([ADR-3.7](../../ARCHITECTURE.md)).
+Real niches: `/TEMPLATES/{template_id}/` — nested git repos, brand-agnostic ([ADR-3.7](../../ARCHITECTURE.md)).
 
 ## Usage policy
 
@@ -43,4 +43,4 @@ Real niches: `/_TEMPLATES/{template_id}/` — nested git repos, brand-agnostic (
 - Map brand `DESIGN.md` / brandbook → `required_brand_tokens` (CSS variables). No mandatory `BRAND.md`.
 - Catalog widgets: vanilla ES modules only ([ADR-3.10](../../ARCHITECTURE.md)).
 
-Further reading: [`_TEMPLATES/README.md`](../../../_TEMPLATES/README.md), [`_TEMPLATES/_TEMPLATE_SPEC.md`](../../../_TEMPLATES/_TEMPLATE_SPEC.md), [`AGENTS.md`](../../../AGENTS.md).
+Further reading: [`TEMPLATES/README.md`](../../../TEMPLATES/README.md), [`TEMPLATES/_TEMPLATE_SPEC.md`](../../../TEMPLATES/_TEMPLATE_SPEC.md), [`AGENTS.md`](../../../AGENTS.md).

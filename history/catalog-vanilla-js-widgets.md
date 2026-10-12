@@ -1,7 +1,7 @@
 # Zero-dependency vanilla JS for catalog widgets
 
 **Date:** 2026-10-12  
-**Scope:** interactive widgets inside `/_TEMPLATES/` only
+**Scope:** interactive widgets inside `/TEMPLATES/` only
 
 **Decision:** High-conversion widgets shipped in the catalog use modern native JavaScript (ES modules) only — no React, Vue, or jQuery in those scripts. Keep each widget under 10KB gzipped and non-blocking on the critical path. Brand projects under `/BRANDS/` may still use the toolkit’s normal component stacks.
 
