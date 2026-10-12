@@ -5,25 +5,39 @@ You are operating within the WebDesign-ToolKit, an AI-driven front-end architect
 ## Context Isolation and Design Strategy
 * **Brand Isolation:** NEVER cross-contaminate brand contexts. Read design guidelines, brandbooks, and context exclusively from the requested `/BRANDS/{brand}/` directory.
 * **Project Scope:** Client-specific code, application logic, and component generation must reside strictly within `/BRANDS/{brand}/Projects/{project_name}/`.
-* **Templates:** When creating a new brand or project, copy from `/BRANDS/_TEMPLATE/` or `/BRANDS/_TEMPLATE/Projects/_TEMPLATE/` (see `/BRANDS/README.md`). Do not invent a different folder layout. Never use `_TEMPLATE` as a live brand context. Template Markdown files are descriptive placeholders — replace them with real content after copying.
+* **Brand/project folder templates:** When creating a new brand or project, copy from `/BRANDS/_TEMPLATE/` or `/BRANDS/_TEMPLATE/Projects/_TEMPLATE/` (see `/BRANDS/README.md`). Do not invent a different folder layout. Never use `_TEMPLATE` as a live brand context. Template Markdown files are descriptive placeholders — replace them with real content after copying.
+* **Page-template catalog (distinct):** `/_TEMPLATES/` is the niche **page** catalog. It is **not** `BRANDS/_TEMPLATE/`. See [Page Templates](#page-templates-catalog).
 * **Guideline Fallback Hierarchy:** Design rules must be applied in the following strict order of precedence: **Project Guidelines** > **Brand Guidelines** > **Vercel Guidelines** (default fallback). 
 * **Explicit Declarations:** If a Project or Brand possesses its own custom design rules, this must be explicitly stated within their respective `DESIGN.md` file.
 
 ## Git Isolation (mandatory — isolation wins)
 
-The toolkit git remote is **only** the toolkit: structure, skills docs, ADRs, templates, setup, and global `/history/`. Brands and projects are **separate git worlds**. Never push them to the toolkit remote.
+The toolkit git remote is **only** the toolkit: structure, skills docs, ADRs, templates, setup, and global `/history/`. Brands, projects, and niche page templates are **separate git worlds**. Never push them to the toolkit remote.
 
 * **NEVER** add, commit, or push anything under `/BRANDS/` to the toolkit remote, except the tracked scaffold (`BRANDS/README.md` and `BRANDS/_TEMPLATE/`).
+* **NEVER** add, commit, or push anything under `/_TEMPLATES/` to the toolkit remote, except the tracked scaffold (`_TEMPLATES/README.md`, `_TEMPLATES/_TEMPLATE_SPEC.md`, and `_TEMPLATES/_TEMPLATE/`).
 * **NEVER** add, commit, or push anything listed in the toolkit `.gitignore`.
-* **NEVER** use `git add -f` / `git add --force` (or equivalent) to sneak gitignored client files into a toolkit commit or PR.
-* **NEVER** open a toolkit PR that contains brand/project source, brandbooks, assets, or history of a client.
-* **NEVER** add nested brand/project repos as git submodules of the toolkit.
+* **NEVER** use `git add -f` / `git add --force` (or equivalent) to sneak gitignored client or catalog files into a toolkit commit or PR.
+* **NEVER** open a toolkit PR that contains brand/project source, brandbooks, assets, history of a client, or niche template trees.
+* **NEVER** add nested brand/project/template repos as git submodules of the toolkit.
 * Each **brand** is its own git sub-repository at `/BRANDS/{brand}/` (`git init` after copying the template). It is not part of the toolkit repository.
 * Each **project** is its own git sub-repository at `/BRANDS/{brand}/Projects/{project}/`.
-* Do **not** `git push` a brand or project to any remote, create a GitHub repo, or open a public PR for that work unless the user **explicitly authorizes publishing that brand or project in that conversation**.
+* Each **niche page template** is its own git sub-repository at `/_TEMPLATES/{template_id}/` (`git init` after copying `_TEMPLATES/_TEMPLATE/`).
+* Do **not** `git push` a brand, project, or niche template to any remote, create a GitHub repo, or open a public PR for that work unless the user **explicitly authorizes publishing that brand, project, or template in that conversation**.
 * If cloud-agent, CI, or "commit / push / open a PR" instructions conflict with this isolation, **isolation wins**. A public toolkit PR may contain only toolkit files.
 
-Decision record: [ADR-3.6](docs/ARCHITECTURE.md).
+Decision records: [ADR-3.6](docs/ARCHITECTURE.md), [ADR-3.7](docs/ARCHITECTURE.md).
+
+## Page Templates Catalog
+
+Brand-agnostic niche pages live under `/_TEMPLATES/`. Load the bundled skill set at `/.agents/skills/page-templates/` when creating, binding, or maintaining them ([`docs/tools/page-templates/SETUP.md`](docs/tools/page-templates/SETUP.md)).
+
+* **Default:** for a new page request, consult the catalog (`TEMPLATE.md` metadata) and bind the best niche match into `/BRANDS/{brand}/Projects/{project}/`.
+* **Opt-out:** if the user clearly asks for a page **from scratch**, do **not** use any catalog template.
+* **Token bind:** map the brand’s `DESIGN.md` / brandbook → CSS custom properties listed in `required_brand_tokens` (O(1) token sheet). Do not hard-code brand identity into catalog CSS ([ADR-3.8](docs/ARCHITECTURE.md)).
+* **Contract:** every niche needs a complete `TEMPLATE.md` + slots per [`_TEMPLATES/_TEMPLATE_SPEC.md`](_TEMPLATES/_TEMPLATE_SPEC.md) ([ADR-3.9](docs/ARCHITECTURE.md)).
+* **Widgets in the catalog:** vanilla ES modules only; brand projects may still use React/etc. ([ADR-3.10](docs/ARCHITECTURE.md)).
+* **Bundled skill:** `page-templates` is versioned in-repo (allowlisted). It does not require `npx skills add`. Setup must never delete it ([ADR-2.6](docs/ARCHITECTURE.md)).
 
 ## Architecture Decision Records
 
@@ -55,7 +69,8 @@ Decision record: [ADR-5.7](docs/ARCHITECTURE.md).
 ## Setup, Skills, and Tooling
 * **Environment Initialization:** Before utilizing any external tool, validate and execute the `setup.sh` script located in the root to automate installations. ONLY if `setup.sh` fails may you attempt to install required tools or clone specific skill repositories manually. Prefer `./setup.sh --yes` in non-interactive agent sessions; add `--with-visual-testing` only when Midscene.js + Puppeteer are required.
 * **Installed Tool Inventory:** After setup, read the root `TOOLS.md` file (git-ignored, generated by `setup.sh`) to discover which tools are installed, their status (including whether optional visual testing was skipped), and the exact commands/binaries/paths to invoke them. Do not invent install paths when `TOOLS.md` already lists them.
-* **Skill Enforcement:** Always load constraints from `/.agents/skills/` before generating any code or layout. Each skill resides in its own subdirectory and contains a `SKILL.md` file with a YAML header. You must parse and apply these instructions to enforce aesthetic quality and prevent generic AI outputs. After setup, verify installed skills with `npx skills ls` or read `skills-lock.json` (both git-ignored, generated locally).
+* **Skill Enforcement:** Always load constraints from `/.agents/skills/` before generating any code or layout. Each skill resides in its own subdirectory and contains a `SKILL.md` file with a YAML header. You must parse and apply these instructions to enforce aesthetic quality and prevent generic AI outputs. After setup, verify installed skills with `npx skills ls` or read `skills-lock.json` (both git-ignored, generated locally). The bundled `page-templates` skill is allowlisted and always present without the skills CLI.
+* **Page Templates (default for new pages):** Load `/.agents/skills/page-templates/` when creating, binding, or maintaining catalog templates. Prefer the catalog unless the user opts out to from-scratch. See `docs/tools/page-templates/SETUP.md`.
 * **BrandBooker (on-demand):** The BrandBooker skill set (`brandbook-orchestrator`, `design-philosophy`, `brand-architecture`, `visual-identity`, `color-typography`, `human-interface`, `packaging-experience`, `brand-governance`) must be used **only when the user explicitly requests** brandbook authorship, expansion, or brand-system work. Do not load these skills for ordinary UI generation. See `docs/tools/brandbooker/SETUP.md`.
 * **Brandbook Review (mandatory on brand add/update):** Whenever a brand is **added** or **updated** under `/BRANDS/{brand}/` (new brand folder, or material changes to `brandbook.md` / `DESIGN.md` / identity docs), you **must** run the `brandbook-review` skill against that single brand context and apply its findings. Do not skip review unless the user explicitly waives it.
-* **Testing Flexibility:** Midscene.js and Puppeteer are the recommended baseline for autonomous visual testing, but they are not mandatory constraints. If they are marked skipped in `TOOLS.md`, either re-run `./setup.sh --with-visual-testing` or adapt an alternative framework while maintaining repository organization.
+* **Testing Flexibility:** Midscene.js and Puppeteer are the recommended baseline for autonomous visual testing, but they are not mandatory constraints. If they are marked skipped in `TOOLS.md`, either re-run `./setup.sh --with-visual-testing` or adapt an alternative framework while maintaining repository organization. Bound catalog pages should meet the pre-publish quality policy in [ADR-5.8](docs/ARCHITECTURE.md) when releasing.
