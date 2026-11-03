@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # WebDesign-ToolKit environment provisioner.
 # Installs shared prerequisites, skills, and curated tools.
+# Impeccable is installed for design review (critique, polish, detect).
 # Optional: Midscene.js + Puppeteer (prompted, or via flags/env).
 # TOOLS.md is updated after every successful (or skipped) install step.
 set -euo pipefail
@@ -15,10 +16,16 @@ VENDOR_DIR="$ROOT_DIR/vendor"
 NPM_PREFIX="$VENDOR_DIR/npm-global"
 VISUAL_DIR="$VENDOR_DIR/visual-testing"
 TOOLS_MD="$ROOT_DIR/TOOLS.md"
+IMPECCABLE_REPO="https://github.com/pbakaus/impeccable"
+IMPECCABLE_SKILL_DIR="$AGENTS_SKILLS_DIR/impeccable"
+# Not IMPECCABLE_BIN: the upstream launcher reads that env var as an engine override.
+IMPECCABLE_LAUNCHER="$IMPECCABLE_SKILL_DIR/scripts/impeccable"
+IMPECCABLE_PINS=(critique polish)
 
 INSTALL_VISUAL="${INSTALL_VISUAL_TESTING:-}"
 NONINTERACTIVE=0
 VISUAL_INSTALLED=0
+IMPECCABLE_INSTALLED=0
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -142,6 +149,33 @@ prompt_visual() {
   esac
 }
 
+# Install Impeccable at project scope via the skills CLI (no design hook, no live mode),
+# pin the review shortcuts, and turn telemetry off. Sets IMPECCABLE_INSTALLED.
+install_impeccable() {
+  local pins_ok=1 telemetry_ok=1 cmd
+  if ! install_agent_skill "$IMPECCABLE_REPO" "impeccable" || [[ ! -f "$IMPECCABLE_LAUNCHER" ]]; then
+    return 1
+  fi
+  chmod +x "$IMPECCABLE_LAUNCHER"
+  # First launcher call downloads the checksum-verified engine into ~/.impeccable/bin.
+  for cmd in "${IMPECCABLE_PINS[@]}"; do
+    if DO_NOT_TRACK=1 "$IMPECCABLE_LAUNCHER" pin pin "$cmd" >/dev/null; then
+      ok "Pinned Impeccable shortcut: .agents/skills/$cmd"
+    else
+      warn "Could not pin Impeccable '$cmd'"
+      pins_ok=0
+    fi
+  done
+  if DO_NOT_TRACK=1 "$IMPECCABLE_LAUNCHER" telemetry off >/dev/null; then
+    ok "Impeccable telemetry off (~/.impeccable/config.json)"
+  else
+    warn "Could not turn Impeccable telemetry off; export DO_NOT_TRACK=1"
+    telemetry_ok=0
+  fi
+  IMPECCABLE_INSTALLED=1
+  [[ "$pins_ok" -eq 1 && "$telemetry_ok" -eq 1 ]]
+}
+
 # ---------------------------------------------------------------------------
 # TOOLS.md — written incrementally after each install
 # ---------------------------------------------------------------------------
@@ -181,6 +215,15 @@ record_tool() {
 finalize_tools_md() {
   # Drop previous footer if re-running mid-file (idempotent-ish: append once at end)
   {
+    echo
+    echo "## Design skills"
+    echo
+    echo "- Generation: Taste Skill (\`.agents/skills/design-taste-frontend/\`)."
+    if [[ "$IMPECCABLE_INSTALLED" -eq 1 ]]; then
+      echo "- Review only: Impeccable \`critique\`, \`polish\` (pinned) and \`.agents/skills/impeccable/scripts/impeccable detect\`. No hook, no live mode, telemetry off."
+    else
+      echo "- Review: Impeccable failed to install. Re-run \`./setup.sh\`."
+    fi
     echo
     echo "## Visual testing"
     echo
@@ -338,6 +381,14 @@ if install_agent_skill "https://github.com/Leonxlnx/taste-skill" "design-taste-f
   record_tool "Taste Skill" "installed" "\`.agents/skills/design-taste-frontend/\`; \`npx skills add https://github.com/Leonxlnx/taste-skill --skill design-taste-frontend\`" "Load before UI generation"
 else
   record_tool "Taste Skill" "failed" "\`npx skills add https://github.com/Leonxlnx/taste-skill --skill design-taste-frontend\`" "See docs/tools/taste-skill/SETUP.md"
+fi
+
+if install_impeccable; then
+  record_tool "Impeccable" "installed (review)" "\`.agents/skills/impeccable/\`; pinned \`.agents/skills/{critique,polish}/\`; \`.agents/skills/impeccable/scripts/impeccable detect <path>\`" "Review only: critique, polish, detect — no hook, no live, telemetry off. See docs/tools/impeccable/SETUP.md"
+elif [[ "$IMPECCABLE_INSTALLED" -eq 1 ]]; then
+  record_tool "Impeccable" "partial (review)" "\`.agents/skills/impeccable/\`; \`.agents/skills/impeccable/scripts/impeccable pin pin <critique|polish>\`" "Skill installed but pin or telemetry-off failed — see docs/tools/impeccable/SETUP.md"
+else
+  record_tool "Impeccable" "failed" "\`npx skills add $IMPECCABLE_REPO --skill impeccable\`" "See docs/tools/impeccable/SETUP.md"
 fi
 
 if install_agent_skill "https://github.com/vercel-labs/agent-skills" "web-design-guidelines"; then

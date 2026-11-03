@@ -26,6 +26,8 @@
 /vendor/
 TOOLS.md
 skills-lock.json
+# Impeccable runtime state (critique reports, hook caches, config)
+/.impeccable/
 
 # Jataí
 INBOX/
