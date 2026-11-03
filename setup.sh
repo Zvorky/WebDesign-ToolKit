@@ -2,6 +2,7 @@
 # WebDesign-ToolKit environment provisioner.
 # Installs shared prerequisites, skills, and curated tools.
 # Impeccable is installed for design review (critique, polish, detect).
+# Optional: Impeccable replaces Taste Skill for generation (prompted, or via flags/env).
 # Optional: Midscene.js + Puppeteer (prompted, or via flags/env).
 # TOOLS.md is updated after every successful (or skipped) install step.
 set -euo pipefail
@@ -23,9 +24,11 @@ IMPECCABLE_LAUNCHER="$IMPECCABLE_SKILL_DIR/scripts/impeccable"
 IMPECCABLE_PINS=(critique polish)
 
 INSTALL_VISUAL="${INSTALL_VISUAL_TESTING:-}"
+INSTALL_IMPECCABLE="${INSTALL_IMPECCABLE_DESIGN:-}"
 NONINTERACTIVE=0
 VISUAL_INSTALLED=0
 IMPECCABLE_INSTALLED=0
+IMPECCABLE_DESIGN=0
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -43,12 +46,17 @@ Usage: ./setup.sh [options]
 Options:
   --with-visual-testing    Install optional Midscene.js + Puppeteer
   --skip-visual-testing    Skip optional Midscene.js + Puppeteer
-  --yes, -y                Non-interactive (skip optional unless --with-visual-testing or
-                           INSTALL_VISUAL_TESTING=1)
+  --with-impeccable-design Use Impeccable instead of Taste Skill for UI generation
+                           (removes .agents/skills/design-taste-frontend)
+  --skip-impeccable-design Keep Taste Skill for generation; Impeccable stays review-only
+  --yes, -y                Non-interactive (skip optional unless --with-visual-testing /
+                           --with-impeccable-design or the matching env var is 1)
   -h, --help               Show this help
 
 Environment:
   INSTALL_VISUAL_TESTING=1|0   Force include/exclude visual testing stack
+  INSTALL_IMPECCABLE_DESIGN=1|0
+                               Force Impeccable (1) or Taste Skill (0) as the generation skill
   ORIGINKIT_API_KEY            Optional; used by Originkit CLI when fetching components
 EOF
 }
@@ -176,6 +184,29 @@ install_impeccable() {
   [[ "$pins_ok" -eq 1 && "$telemetry_ok" -eq 1 ]]
 }
 
+prompt_impeccable_design() {
+  if [[ -n "$INSTALL_IMPECCABLE" ]]; then
+    case "${INSTALL_IMPECCABLE,,}" in
+      1|y|yes|true) return 0 ;;
+      *) return 1 ;;
+    esac
+  fi
+
+  if [[ "$NONINTERACTIVE" -eq 1 ]] || [[ ! -t 0 ]]; then
+    warn "Non-interactive session: keeping Taste Skill for UI generation (Impeccable stays review-only)"
+    warn "Re-run with --with-impeccable-design or INSTALL_IMPECCABLE_DESIGN=1 to use Impeccable instead"
+    return 1
+  fi
+
+  local answer
+  printf '\n'
+  read -r -p "Replace Taste Skill with Impeccable for UI generation? [y/N] " answer
+  case "${answer,,}" in
+    y|yes) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 # ---------------------------------------------------------------------------
 # TOOLS.md — written incrementally after each install
 # ---------------------------------------------------------------------------
@@ -218,11 +249,19 @@ finalize_tools_md() {
     echo
     echo "## Design skills"
     echo
-    echo "- Generation: Taste Skill (\`.agents/skills/design-taste-frontend/\`)."
-    if [[ "$IMPECCABLE_INSTALLED" -eq 1 ]]; then
-      echo "- Review only: Impeccable \`critique\`, \`polish\` (pinned) and \`.agents/skills/impeccable/scripts/impeccable detect\`. No hook, no live mode, telemetry off."
+    if [[ "$IMPECCABLE_DESIGN" -eq 1 ]]; then
+      echo "Mode: **impeccable** (\`--with-impeccable-design\`)."
+      echo
+      echo "- Generation and review: Impeccable (\`.agents/skills/impeccable/\`). All commands except \`live\` and the design hook. Telemetry off."
+      echo "- Taste Skill is **not** installed. Restore it with \`./setup.sh --skip-impeccable-design\`."
     else
-      echo "- Review: Impeccable failed to install. Re-run \`./setup.sh\`."
+      echo "Mode: **taste** (default)."
+      echo
+      echo "- Generation: Taste Skill (\`.agents/skills/design-taste-frontend/\`)."
+      echo "- Review only: Impeccable \`critique\`, \`polish\` (pinned) and \`.agents/skills/impeccable/scripts/impeccable detect\`. No hook, no live mode, telemetry off."
+    fi
+    if [[ "$IMPECCABLE_INSTALLED" -ne 1 ]]; then
+      echo "- **Warning:** Impeccable failed to install. Re-run \`./setup.sh\`."
     fi
     echo
     echo "## Visual testing"
@@ -272,6 +311,8 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --with-visual-testing) INSTALL_VISUAL=1; shift ;;
     --skip-visual-testing) INSTALL_VISUAL=0; shift ;;
+    --with-impeccable-design) INSTALL_IMPECCABLE=1; shift ;;
+    --skip-impeccable-design) INSTALL_IMPECCABLE=0; shift ;;
     --yes|-y) NONINTERACTIVE=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) err "Unknown option: $1"; usage; exit 1 ;;
@@ -377,16 +418,44 @@ fi
 log "Installing agent skills into .agents/skills/"
 ensure_dir "$AGENTS_SKILLS_DIR"
 
-if install_agent_skill "https://github.com/Leonxlnx/taste-skill" "design-taste-frontend"; then
+if prompt_impeccable_design; then
+  IMPECCABLE_DESIGN=1
+  ok "Impeccable replaces Taste Skill for UI generation"
+  # The two generation skills must never coexist.
+  if [[ -d "$AGENTS_SKILLS_DIR/design-taste-frontend" ]]; then
+    log "Removing Taste Skill (.agents/skills/design-taste-frontend)"
+    npx --yes skills remove design-taste-frontend -y >/dev/null 2>&1 \
+      || warn "skills CLI could not remove design-taste-frontend; deleting the folder"
+    rm -rf "$AGENTS_SKILLS_DIR/design-taste-frontend"
+  fi
+  # skills CLI leaves the lockfile entry behind; drop it so a lockfile restore cannot bring Taste back.
+  if [[ -f "$ROOT_DIR/skills-lock.json" ]]; then
+    node -e '
+      const fs = require("fs"); const f = process.argv[1];
+      const lock = JSON.parse(fs.readFileSync(f, "utf8"));
+      if (lock.skills && lock.skills["design-taste-frontend"]) {
+        delete lock.skills["design-taste-frontend"];
+        fs.writeFileSync(f, JSON.stringify(lock, null, 2) + "\n");
+      }' "$ROOT_DIR/skills-lock.json" || warn "Could not drop design-taste-frontend from skills-lock.json"
+  fi
+  record_tool "Taste Skill" "replaced (optional)" "\`./setup.sh --skip-impeccable-design\` to restore" "Impeccable is the generation skill (--with-impeccable-design)"
+elif install_agent_skill "https://github.com/Leonxlnx/taste-skill" "design-taste-frontend"; then
   record_tool "Taste Skill" "installed" "\`.agents/skills/design-taste-frontend/\`; \`npx skills add https://github.com/Leonxlnx/taste-skill --skill design-taste-frontend\`" "Load before UI generation"
 else
   record_tool "Taste Skill" "failed" "\`npx skills add https://github.com/Leonxlnx/taste-skill --skill design-taste-frontend\`" "See docs/tools/taste-skill/SETUP.md"
 fi
 
+if [[ "$IMPECCABLE_DESIGN" -eq 1 ]]; then
+  IMPECCABLE_ROLE="design"
+  IMPECCABLE_NOTE="Generation + review: all commands except live and the hook; telemetry off. See docs/tools/impeccable/SETUP.md"
+else
+  IMPECCABLE_ROLE="review"
+  IMPECCABLE_NOTE="Review only: critique, polish, detect — no hook, no live, telemetry off. See docs/tools/impeccable/SETUP.md"
+fi
 if install_impeccable; then
-  record_tool "Impeccable" "installed (review)" "\`.agents/skills/impeccable/\`; pinned \`.agents/skills/{critique,polish}/\`; \`.agents/skills/impeccable/scripts/impeccable detect <path>\`" "Review only: critique, polish, detect — no hook, no live, telemetry off. See docs/tools/impeccable/SETUP.md"
+  record_tool "Impeccable" "installed ($IMPECCABLE_ROLE)" "\`.agents/skills/impeccable/\`; pinned \`.agents/skills/{critique,polish}/\`; \`.agents/skills/impeccable/scripts/impeccable detect <path>\`" "$IMPECCABLE_NOTE"
 elif [[ "$IMPECCABLE_INSTALLED" -eq 1 ]]; then
-  record_tool "Impeccable" "partial (review)" "\`.agents/skills/impeccable/\`; \`.agents/skills/impeccable/scripts/impeccable pin pin <critique|polish>\`" "Skill installed but pin or telemetry-off failed — see docs/tools/impeccable/SETUP.md"
+  record_tool "Impeccable" "partial ($IMPECCABLE_ROLE)" "\`.agents/skills/impeccable/\`; \`.agents/skills/impeccable/scripts/impeccable pin pin <critique|polish>\`" "Skill installed but pin or telemetry-off failed — see docs/tools/impeccable/SETUP.md"
 else
   record_tool "Impeccable" "failed" "\`npx skills add $IMPECCABLE_REPO --skill impeccable\`" "See docs/tools/impeccable/SETUP.md"
 fi
@@ -628,7 +697,12 @@ echo "Next steps:"
 echo "  1. Read TOOLS.md for installed binaries and paths"
 echo "  2. Load skills from .agents/skills/ before generating UI"
 echo "  3. Keep brand/project work in nested git repos under /BRANDS/ — never push them to the toolkit remote"
+if [[ "$IMPECCABLE_DESIGN" -eq 1 ]]; then
+  echo "  4. Design mode: impeccable (Impeccable generates and reviews; Taste Skill not installed)"
+else
+  echo "  4. Design mode: taste (Taste Skill generates; Impeccable reviews via critique, polish, detect)"
+fi
 if [[ "$VISUAL_INSTALLED" -eq 0 ]]; then
-  echo "  4. Optional visual testing: ./setup.sh --with-visual-testing"
+  echo "  5. Optional visual testing: ./setup.sh --with-visual-testing"
 fi
 echo
