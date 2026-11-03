@@ -60,6 +60,8 @@ Also nested (gitignored):     TEMPLATES/{template_id}/  (git init) — niche pag
 ./setup.sh
 # optional visual testing stack:
 ./setup.sh --with-visual-testing
+# optional: Impeccable replaces Taste Skill for UI generation:
+./setup.sh --with-impeccable-design
 ```
 
 4. Open the generated **`TOOLS.md`** at the repo root. It lists what was installed, skipped, or failed, plus exact commands and paths on *your* machine.
@@ -166,7 +168,8 @@ At each tier:
 Useful agent skills after setup:
 
 - **page-templates** (bundled) — create / bind / maintain `/TEMPLATES/` niches  
-- **design-taste-frontend** (Taste Skill) — anti-slop layout/aesthetic rules  
+- **design-taste-frontend** (Taste Skill) — anti-slop layout/aesthetic rules (default generation skill)  
+- **impeccable** — review: pinned `critique` / `polish` + `scripts/impeccable detect`; generation too only with `--with-impeccable-design`  
 - **web-design-guidelines** — Vercel interface guidelines as fallback  
 - **BrandBooker** — brandbook authorship on request; **`brandbook-review`** whenever a brand is added or updated  
 
@@ -179,6 +182,7 @@ Useful agent skills after setup:
 | Local install paths / status | `TOOLS.md` (after `setup.sh`) |
 | Page-template catalog | [`docs/tools/page-templates/SETUP.md`](./tools/page-templates/SETUP.md) |
 | Taste / anti-slop skill | [`docs/tools/taste-skill/SETUP.md`](./tools/taste-skill/SETUP.md) |
+| Design review / Impeccable | [`docs/tools/impeccable/SETUP.md`](./tools/impeccable/SETUP.md) |
 | Brandbook authorship & review | [`docs/tools/brandbooker/SETUP.md`](./tools/brandbooker/SETUP.md) |
 | Ready-made `DESIGN.md` examples | [`docs/tools/awesome-design-md/SETUP.md`](./tools/awesome-design-md/SETUP.md) |
 | Motion / MCP components | [`docs/tools/originkit/SETUP.md`](./tools/originkit/SETUP.md) |

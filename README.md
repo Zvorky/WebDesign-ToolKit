@@ -49,6 +49,10 @@ Visual testing is **optional**. `setup.sh` prompts whether to install it (or use
 | **`MIDSCENE_MODEL_API_KEY`** (+ related `MIDSCENE_MODEL_*` vars) | Required to run Midscene vision agents. See `docs/tools/midscene-js/SETUP.md`. |
 | **Extra disk space** | Browser binary + `vendor/visual-testing/` node_modules. |
 
+### Optional — Impeccable as generation skill
+
+By default Taste Skill generates UI and Impeccable only reviews it. `setup.sh` prompts whether to swap (or use `--with-impeccable-design` / `--skip-impeccable-design`, env `INSTALL_IMPECCABLE_DESIGN=1|0`). Swapping removes Taste Skill. See `docs/tools/impeccable/SETUP.md`.
+
 ### Project-level (when generating UI)
 
 Cult UI and Skiper UI expect a **React + Tailwind CSS + shadcn/ui** app under `/BRANDS/{brand}/Projects/{project_name}/`. Those project deps are not installed at toolkit root.
@@ -59,6 +63,8 @@ Cult UI and Skiper UI expect a **React + Tailwind CSS + shadcn/ui** app under `/
 ./setup.sh
 # optional visual testing:
 ./setup.sh --with-visual-testing
+# optional: Impeccable instead of Taste Skill for UI generation:
+./setup.sh --with-impeccable-design
 ```
 
 After setup, read `TOOLS.md` for installed binaries and paths. Per-tool details live in `docs/tools/*/SETUP.md`.
@@ -122,6 +128,7 @@ Guideline precedence remains: **Project > Brand > Vercel**.
 | Tool / Skill | Link | License & Usage |
 | :--- | :--- | :--- |
 | **Taste Skill** | [tasteskill.dev](https://www.tasteskill.dev/) | MIT License. Open source constraint guidelines to enforce design quality. |
+| **Impeccable** | [impeccable.style](https://impeccable.style) | Apache-2.0. Review skill by default (`critique`, `polish`, `detect`); optional generation skill instead of Taste via `--with-impeccable-design`. No hook, no live mode, telemetry off. |
 | **Page Templates** | [docs/tools/page-templates/SETUP.md](docs/tools/page-templates/SETUP.md) | Bundled in-repo skill + `/TEMPLATES/` catalog. No install step. |
 | **BrandBooker** | [zvorky/brandbooker](https://github.com/zvorky/brandbooker) | Brand system skill set. Use on request only; run `brandbook-review` whenever a brand is added or updated. |
 | **awesome-design-md** | [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) | Open source reference for plain-text design constraints and brand systems. |

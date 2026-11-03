@@ -19,6 +19,8 @@ npx skills add https://github.com/Leonxlnx/taste-skill --skill "design-taste-fro
 
 Installed by `setup.sh` into `/.agents/skills/design-taste-frontend/` via the skills CLI. Agents (Cursor, Claude Code, Codex, etc.) discover skills from that directory automatically.
 
+Default generation skill. `./setup.sh --with-impeccable-design` skips it and removes an existing copy (Impeccable then generates); `--skip-impeccable-design` restores it. Impeccable stays installed for review in both modes — see [`../impeccable/SETUP.md`](../impeccable/SETUP.md).
+
 ## Verify
 
 ```bash
