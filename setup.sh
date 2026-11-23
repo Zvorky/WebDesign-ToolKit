@@ -471,7 +471,7 @@ log "Installing BrandBooker skill set"
 BRANDBOOKER_REPO="https://github.com/zvorky/brandbooker"
 BRANDBOOKER_OK=1
 for skill in \
-  brandbook-orchestrator \
+  brandbooker \
   design-philosophy \
   brand-architecture \
   visual-identity \
@@ -486,7 +486,7 @@ do
   fi
 done
 if [[ "$BRANDBOOKER_OK" -eq 1 ]]; then
-  record_tool "BrandBooker" "installed" "\`.agents/skills/{brandbook-orchestrator,brandbook-review,…}/\`; \`npx skills add https://github.com/zvorky/brandbooker --skill '*'\`" "On-demand except brandbook-review on brand add/update — see docs/tools/brandbooker/SETUP.md"
+  record_tool "BrandBooker" "installed" "\`.agents/skills/brandbooker/{SKILL.md,brandbook-review,…}\`; \`npx skills add https://github.com/zvorky/brandbooker --skill '*'\`" "On-demand except brandbook-review on brand add/update — see docs/tools/brandbooker/SETUP.md"
 else
   record_tool "BrandBooker" "partial" "\`npx skills add https://github.com/zvorky/brandbooker --skill '*'\`" "One or more BrandBooker skills failed — see docs/tools/brandbooker/SETUP.md"
 fi

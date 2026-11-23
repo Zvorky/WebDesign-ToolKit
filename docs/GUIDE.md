@@ -175,6 +175,56 @@ Useful agent skills after setup:
 
 ---
 
+## BrandBooker v2 & Optical Craft Architecture
+
+When authoring brand systems or refining digital UI with BrandBooker v2 (`.agents/skills/brandbooker/`), the toolkit enforces optical engineering, mathematical rigor, and perceptual color models rather than subjective guesswork:
+
+### 1. 4-Tier Responsive Mark Matrix
+Brand identities must define deterministic rendering floors across physical and digital scales:
+- **Full Lockup (>= 120px / 35mm):** Logomark + wordmark + optional descriptor.
+- **Stacked / Compact Lockup (>= 64px / 20mm):** Vertical or compressed arrangement.
+- **Logomark / Monogram (>= 24px / 15mm):** Standalone mark; micro-details simplified.
+- **Solid Favicon / App Icon (16×16px):** High-contrast silhouette, zero hairline strokes, optimized for pixel grids.
+
+### 2. Perceptual Color Ramps (`OKLCH` + `WCAG 2.1` / `APCA`)
+Color palettes must be authored in perceptual color space (`OKLCH` / `LCh`) with paired `HEX` fallbacks:
+- Uniform lightness steps prevent muddy shifts across hues.
+- Dual contrast compliance: WCAG 2.1 AA (`4.5:1` body copy, `3.0:1` large text / UI borders) and APCA (`Lc >= 60` body, `Lc >= 45` large/subtle).
+- Color-blindness accessibility: maintain minimum luminance delta ($\Delta L \ge 35$) between adjacent critical states.
+
+### 3. Concentric Border-Radius Geometry
+Nested rounded elements (e.g., cards inside shells, buttons inside padded containers) must calculate inner radius to maintain parallel arcs at 45°:
+
+$$R_{\text{inner}} = \max\left(0,\; R_{\text{outer}} - (\text{padding} + \text{border\_width})\right)$$
+
+In CSS tokens:
+```css
+--radius-outer: 24px;
+--shell-padding: 12px;
+--shell-border: 1px;
+--radius-inner: max(0px, calc(var(--radius-outer) - var(--shell-padding) - var(--shell-border)));
+```
+*Surface Independence Threshold:* Containers with `padding > 24px` visually act as independent surfaces and do not strictly require concentric curvature linking.
+
+### 4. Micro-Typography & Optical Alignment
+- **Tabular Numerics:** Enforce `font-variant-numeric: tabular-nums` (or `font-feature-settings: "tnum" 1`) across financial tables, pricing cards, counters, and metrics so numbers do not jump during updates.
+- **Optical Centering:** Directional glyphs (play arrows, forward carets, disclosure chevrons) must be shifted along their visual center of mass rather than their geometric bounding box.
+- **No Synthetic Faux Styles:** Always set `font-synthesis: none` (or `font-synthesis: weight style;`) to prevent browsers from distorting typefaces into faux bold or faux oblique.
+- **24×24 dp Iconography Grid:** UI icons are drafted on a `24×24 dp` artboard with a `20×20 dp` active live area and a `2 dp` padding trim to ensure consistent visual weight.
+
+### 5. 6-Test Acceptance Gate (`>= 85/100`)
+Every brand system authored or materially updated must pass the critical evaluation rubric in `brandbook-review`:
+1. Micro-scale stress test (16px favicon & 80px mobile header legibility).
+2. Contrast & gamut integrity (WCAG 2.1 AA, APCA, CMYK / sRGB / P3 gamuts).
+3. Fallback typography & font metric calibration (`size-adjust`, `ascent-override`).
+4. Verbal identity & claim source verification (exact URLs for all cited statistics/awards).
+5. Concentric token usability & CSS custom property completeness.
+6. Independent designer handover test (zero ambiguities in reproduction rules).
+
+Passing score for release readiness is `>= 85/100`. For installation, operational policies, and skill mapping, see [`docs/tools/brandbooker/SETUP.md`](./tools/brandbooker/SETUP.md).
+
+---
+
 ## Curated tools (where to look)
 
 | Need | Start here |
